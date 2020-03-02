@@ -92,3 +92,5 @@ User
   - Take Public Course
     - Permissions
       - Role: User
+  - Register
+  - Login
