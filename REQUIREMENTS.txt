@@ -1,0 +1,94 @@
+
+Training Management System
+.Net MVC
+Design System
+Code
+Algorithm
+Duration
+
+Requirements:
+Search, CRUD, sort, paging
+Admin
+   - Change role
+   - Manage Courses (start date, end date, location, description, title, instructor)
+   - Assign Course and Course visibility to user
+   - Manage User
+   - Course Schedule
+   - Course Rating
+Manager
+   - Manage Courses (start date, end date, location, description, title, instructor)
+   - Assign Course and Course visibility to user
+   - Course Schedule
+   - Course Rating
+User
+   - Register and login
+   - Take course
+   - Give comment and rating to course
+
+----------------------------------------------------------------------------------------------
+
+# Entities
+  - User
+  - Role
+  - Course
+  - Rate
+  - Comment
+
+# Roles
+  - Administrator
+  - Manager
+  - User
+
+# Course Detail
+  - Title
+  - Description
+  - Location
+  - Speaker
+  - Visibility
+    - Public
+    - Private
+  - Starting Date
+  - Ending Date
+
+# Actions
+  - Change Role
+    - Permissions
+      - Role: Adminitrator
+  - Manage User (no detail available)
+    - Permissions
+      - Role: Administrator
+  - Manage Course
+    - Create
+      - Permissions
+        - Role: Administrator
+        - Role: Manager
+    - Show and List Public
+    - Show and List Private
+      - Role: Administrator
+      - Role: Manager + Creator
+      - Role: User + Attendee
+    - Update
+      - Permissions
+        - Role: Administrator
+        - Role: Manager + Creator
+    - Remove
+      - Permissions
+        - Role: Administrator
+        - Role: Manager + Creator
+    - Assign User Into
+      - Permissions
+        - Role: Administrator
+        - Role: Manager + Creator
+  - Comment and Rate
+    - Create
+      - Permissions
+        - Role: User + Attendee
+    - Show and List Public
+    - Show and List Private
+      - Permissions
+        - Role: Administrator
+        - Role: Manager + Creator
+        - Role: User + Attendee
+  - Take Public Course
+    - Permissions
+      - Role: User
