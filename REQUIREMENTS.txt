@@ -52,7 +52,7 @@ User
 # Actions
   - Change Role
     - Permissions
-      - Role: Adminitrator
+      - Role: Administrator
   - Manage User (no detail available)
     - Permissions
       - Role: Administrator
