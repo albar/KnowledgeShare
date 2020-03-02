@@ -14,16 +14,16 @@ Admin
    - Assign Course and Course visibility to user
    - Manage User
    - Course Schedule
-   - Course Rating
+   - Course Feedback
 Manager
    - Manage Courses (start date, end date, location, description, title, instructor)
    - Assign Course and Course visibility to user
    - Course Schedule
-   - Course Rating
+   - Course Feedback
 User
    - Register and login
    - Take course
-   - Give comment and rating to course
+   - Give feedback to course
 
 ----------------------------------------------------------------------------------------------
 
@@ -31,8 +31,7 @@ User
   - User
   - Role
   - Course
-  - Rate
-  - Comment
+  - Feedback
 
 # Roles
   - Administrator
@@ -79,7 +78,7 @@ User
       - Permissions
         - Role: Administrator
         - Role: Manager + Creator
-  - Comment and Rate
+  - Feedback
     - Create
       - Permissions
         - Role: User + Attendee
