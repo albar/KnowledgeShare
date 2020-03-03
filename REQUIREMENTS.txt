@@ -45,16 +45,19 @@ User
     - Onsite
       - Latitude
       - Longitude
-      - Description
+      - Note
     - Online
       - URL
-      - Description
+      - Note
   - Speaker
   - Visibility
     - Public
     - Private
-  - Starting Date
-  - Ending Date
+  - Sessions
+    - *
+      - Start Time
+      - End Time
+      - Note
 
 # Actions
   - Change Role
