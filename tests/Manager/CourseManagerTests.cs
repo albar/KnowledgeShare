@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
 using KnowledgeShare.Manager.Abstractions;
+using KnowledgeShare.Manager.Exceptions;
 using KnowledgeShare.Manager.Test.Fakers;
 using KnowledgeShare.Store.Abstractions;
 using Moq;
@@ -39,7 +40,7 @@ namespace KnowledgeShare.Manager.Test
                 Note = "",
             };
             Visibility visibility = Visibility.Public;
-            Session[] sessions = new Session[] { };
+            Session[] sessions = new Session[] { new Session() };
 
             Course course = await courseManager.CreateAsync(
                 author,
@@ -61,6 +62,69 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.Verify(
                 s => s.CreateAsync(It.IsAny<Course>()),
                 Times.Once());
+        }
+
+        [Theory]
+        [InlineData(CourseUserRole.User, null, null, null, false, Visibility.Public, 0, new string[] {"author", "title", "speaker", "location", "sessions"})]
+        public async Task Can_Not_Create_Course_With_Invalid_Data(
+            CourseUserRole role,
+            string title,
+            string description,
+            ICourseUser speaker,
+            bool witLocation,
+            Visibility visibility,
+            int sessionCount,
+            string[] errorKeys)
+        {
+            var fakeCourseStore = new Mock<ICourseStore>();
+            fakeCourseStore.Setup(s => s.CreateAsync(It.IsAny<Course>()))
+            .Returns<Course>(course =>
+            {
+                return Task.FromResult(course);
+            });
+
+            ICourseUserManager userManager = new FakeCourseUserManager();
+
+            ICourseManager courseManager = new CourseManager(
+                userManager,
+                fakeCourseStore.Object);
+
+            ICourseUser author = await userManager.CreateAsync(
+                "admin", "admin@test.com", role);
+            ILocation location = null;
+            if (witLocation)
+            {
+                location = new OnlineLocation
+                {
+                    Url = "http://localhost",
+                    Note = "",
+                };
+            }
+            Session[] sessions = Enumerable.Range(0, sessionCount)
+                .Select(_ => new Session())
+                .ToArray();
+
+            ValidationException exception = await Assert
+                .ThrowsAsync<ValidationException>(async () =>
+                    await courseManager.CreateAsync(
+                    author,
+                    title,
+                    speaker,
+                    description,
+                    location,
+                    visibility,
+                    sessions
+                ));
+
+            int capturedErrorsCount = exception.ErrorsBag.Keys
+                .Intersect(errorKeys)
+                .Count();
+
+            Assert.Equal(errorKeys.Length, capturedErrorsCount);
+
+            fakeCourseStore.Verify(
+                s => s.CreateAsync(It.IsAny<Course>()),
+                Times.Never);
         }
     }
 }
