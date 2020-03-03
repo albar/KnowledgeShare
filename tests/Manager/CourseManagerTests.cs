@@ -78,10 +78,10 @@ namespace KnowledgeShare.Manager.Test
         {
             var fakeCourseStore = new Mock<ICourseStore>();
             fakeCourseStore.Setup(s => s.CreateAsync(It.IsAny<Course>()))
-            .Returns<Course>(course =>
-            {
-                return Task.FromResult(course);
-            });
+                .Returns<Course>(course =>
+                {
+                    return Task.FromResult(course);
+                });
 
             ICourseUserManager userManager = new FakeCourseUserManager();
 
