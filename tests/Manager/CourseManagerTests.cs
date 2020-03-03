@@ -71,7 +71,7 @@ namespace KnowledgeShare.Manager.Test
             string title,
             string description,
             ICourseUser speaker,
-            bool witLocation,
+            bool withLocation,
             Visibility visibility,
             int sessionCount,
             string[] errorKeys)
@@ -92,7 +92,7 @@ namespace KnowledgeShare.Manager.Test
             ICourseUser author = await userManager.CreateAsync(
                 "admin", "admin@test.com", role);
             ILocation location = null;
-            if (witLocation)
+            if (withLocation)
             {
                 location = new OnlineLocation
                 {
