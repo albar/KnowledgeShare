@@ -8,7 +8,7 @@ namespace KnowledgeShare.Manager.Abstractions
         Task<ICourseUser> CreateAsync(
             string username,
             string email,
-            ICourseRole adminRole);
+            CourseUserRole role);
 
         Task<bool> IsExistedAsync(string id);
     }

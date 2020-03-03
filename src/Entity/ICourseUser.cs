@@ -5,6 +5,6 @@ namespace KnowledgeShare.Entity
         string Id { get; }
         string Username { get; set; }
         string Email { get; set; }
-        ICourseRole Role { get; set; }
+        CourseUserRole Role { get; set; }
     }
 }

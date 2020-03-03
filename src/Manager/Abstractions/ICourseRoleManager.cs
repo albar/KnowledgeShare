@@ -5,6 +5,6 @@ namespace KnowledgeShare.Manager.Abstractions
 {
     public interface ICourseRoleManager
     {
-        Task<ICourseRole> CreateAsync(string name);
+        Task<CourseUserRole> CreateAsync(string name);
     }
 }

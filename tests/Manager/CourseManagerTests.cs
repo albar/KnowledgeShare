@@ -11,8 +11,10 @@ namespace KnowledgeShare.Manager.Test
 {
     public class CourseManagerTests
     {
-        [Fact]
-        public async Task Admin_Can_Create_Course()
+        [Theory]
+        [InlineData(CourseUserRole.Administrator)]
+        [InlineData(CourseUserRole.Manager)]
+        public async Task Can_Create_Course_With_Valid_Data(CourseUserRole role)
         {
             var fakeCourseStore = new Mock<ICourseStore>();
             fakeCourseStore.Setup(s => s.CreateAsync(It.IsAny<Course>()))
@@ -22,18 +24,14 @@ namespace KnowledgeShare.Manager.Test
             });
 
             ICourseUserManager userManager = new FakeCourseUserManager();
-            ICourseRoleManager roleManager = new FakeCourseRoleManager();
-
-            ICourseRole adminRole = await roleManager.CreateAsync("Administrator");
-            ICourseRole userRole = await roleManager.CreateAsync("User");
 
             ICourseManager courseManager = new CourseManager(
                 userManager,
                 fakeCourseStore.Object);
 
-            ICourseUser admin = await userManager.CreateAsync("admin", "admin@test.com", adminRole);
+            ICourseUser author = await userManager.CreateAsync("admin", "admin@test.com", role);
             const string title = "A Course";
-            ICourseUser speaker = await userManager.CreateAsync("user", "user@test.com", userRole);
+            ICourseUser speaker = await userManager.CreateAsync("user", "user@test.com", CourseUserRole.User);
             const string description = "A Description";
             ILocation location = new OnlineLocation
             {
@@ -44,7 +42,7 @@ namespace KnowledgeShare.Manager.Test
             Session[] sessions = new Session[] { };
 
             Course course = await courseManager.CreateAsync(
-                admin,
+                author,
                 title,
                 speaker,
                 description,
@@ -53,7 +51,7 @@ namespace KnowledgeShare.Manager.Test
                 sessions
             );
 
-            Assert.Equal(adminRole.Id, course.Author.Id);
+            Assert.Equal(author.Id, course.Author.Id);
             Assert.Equal(title, course.Title);
             Assert.Equal(speaker.Id, course.Speaker.Id);
             Assert.Equal(description, course.Description);

@@ -11,7 +11,7 @@ namespace KnowledgeShare.Manager.Test.Fakers
     {
         private readonly List<ICourseUser> _users = new List<ICourseUser>();
 
-        public async Task<ICourseUser> CreateAsync(string username, string email, ICourseRole role)
+        public async Task<ICourseUser> CreateAsync(string username, string email, CourseUserRole role)
         {
             var user = new CourseUser
             {
@@ -34,7 +34,7 @@ namespace KnowledgeShare.Manager.Test.Fakers
             public string Id { get; } = new Guid().ToString();
             public string Username { get; set; }
             public string Email { get; set; }
-            public ICourseRole Role { get; set; }
+            public CourseUserRole Role { get; set; }
         }
     }
 }
