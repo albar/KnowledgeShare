@@ -42,6 +42,13 @@ User
   - Title
   - Description
   - Location
+    - Onsite
+      - Latitude
+      - Longitude
+      - Description
+    - Online
+      - URL
+      - Description
   - Speaker
   - Visibility
     - Public
