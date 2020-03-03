@@ -11,7 +11,7 @@ namespace KnowledgeShare.Manager.Test.Fakers
     {
         private readonly List<ICourseUser> _users = new List<ICourseUser>();
 
-        public async Task<ICourseUser> CreateAsync(string username, string email, CourseUserRole role)
+        public Task<ICourseUser> CreateAsync(string username, string email, CourseUserRole role)
         {
             var user = new CourseUser
             {
@@ -21,7 +21,7 @@ namespace KnowledgeShare.Manager.Test.Fakers
             };
 
             _users.Add(user);
-            return user;
+            return Task.FromResult<ICourseUser>(user);
         }
 
         public Task<bool> IsExistedAsync(string id)
