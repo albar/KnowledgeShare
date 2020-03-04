@@ -9,16 +9,16 @@ namespace KnowledgeShare.Manager.Collection
 {
     public class CourseCollection : Abstractions.ICollection<Course>
     {
+        private readonly IQueryable<Course> _query;
+
         public CourseCollection(IQueryable<Course> query)
         {
-            Query = query;
+            _query = query;
         }
-
-        public IQueryable<Course> Query { get; }
 
         public async Task<List<Course>> ToListAsync(CancellationToken token = default)
         {
-            return await Task.Run(Query.ToList, token);
+            return await Task.Run(_query.ToList, token);
         }
     }
 }
