@@ -239,7 +239,7 @@ namespace KnowledgeShare.Manager.Test
                     Task.FromResult(courses.ContainsKey(id) ? courses[id] : null));
 
             ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
-            Course foundCourse = await courseManager.FindAccessibleToUserById(accessor, course.Id);
+            Course foundCourse = await courseManager.FindAccessibleToUserByIdAsync(accessor, course.Id);
 
             Assert.Equal(title, foundCourse.Title);
             fakeCourseStore.Verify<Task<Course>>(s =>

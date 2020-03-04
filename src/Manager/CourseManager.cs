@@ -107,7 +107,7 @@ namespace KnowledgeShare.Manager
                 ).ToCollection();
         }
 
-        public async Task<Course> FindAccessibleToUserById(ICourseUser accessor, string id)
+        public async Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string id)
         {
             return await _courseStore.FindByIdAsync(id);
         }
