@@ -22,12 +22,14 @@ namespace KnowledgeShare.Manager
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
+            token.ThrowIfCancellationRequested();
+
             if (course == null)
             {
                 throw new ArgumentNullException("course");
             }
 
-            var result = await ValidateCourseAsync(course);
+            var result = await ValidateCourseAsync(course, token);
             if (!result.Succeeded)
             {
                 throw new ValidationException(result.ErrorsBag);
@@ -36,13 +38,13 @@ namespace KnowledgeShare.Manager
             await _store.CreateAsync(course, token);
         }
 
-        private async Task<ValidationResult> ValidateCourseAsync(Course course)
+        private async Task<ValidationResult> ValidateCourseAsync(Course course, CancellationToken token)
         {
             var errorsBag = new ValidationErrorsBag();
 
             foreach (var validator in _validators)
             {
-                var result = await validator.ValidateAsync(this, course);
+                var result = await validator.ValidateAsync(this, course, token);
                 if (!result.Succeeded)
                 {
                     errorsBag.Append(result.ErrorsBag);

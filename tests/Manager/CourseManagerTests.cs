@@ -75,8 +75,9 @@ namespace KnowledgeShare.Manager.Test
                 .Returns(Task.CompletedTask);
 
             var fakeValidator = new Mock<ICourseValidator>();
-            fakeValidator.Setup(validator => validator.ValidateAsync(It.IsAny<CourseManager>(), It.IsAny<Course>()))
-                .Returns<CourseManager, Course>((_, course) =>
+            fakeValidator.Setup(validator =>
+                    validator.ValidateAsync(It.IsAny<CourseManager>(), It.IsAny<Course>(), It.IsAny<CancellationToken>()))
+                .Returns<CourseManager, Course, CancellationToken>((_, course, __) =>
                 {
                     ValidationErrorsBag bag = new ValidationErrorsBag();
                     if (course.Author == null || course.Author.Role == CourseUserRole.User)
