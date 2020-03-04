@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
@@ -26,7 +27,7 @@ namespace KnowledgeShare.Manager
             string description,
             ILocation location,
             Visibility visibility,
-            Session[] sessions)
+            List<Session> sessions)
         {
             var errors = new ValidationErrorsBag();
 
@@ -73,7 +74,7 @@ namespace KnowledgeShare.Manager
             }
 
             // validate sessions at least one
-            if (sessions.Length < 1)
+            if (sessions.Count < 1)
             {
                 errors.AddInto("sessions", "At least one session required");
             }
@@ -97,7 +98,7 @@ namespace KnowledgeShare.Manager
             return await _courseStore.CreateAsync(course);
         }
 
-        public ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor)
+        public Abstractions.ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor)
         {
             return _courseStore.Query.Where(course => course.Visibility == Visibility.Public
                     || accessor.Role == CourseUserRole.Administrator

@@ -41,7 +41,7 @@ namespace KnowledgeShare.Manager.Test
                 Note = "",
             };
             Visibility visibility = Visibility.Public;
-            Session[] sessions = new Session[] { new Session() };
+            List<Session> sessions = new List<Session> { new Session() };
 
             Course course = await courseManager.CreateAsync(
                 author,
@@ -103,9 +103,9 @@ namespace KnowledgeShare.Manager.Test
                     Note = "",
                 };
             }
-            Session[] sessions = Enumerable.Range(0, sessionCount)
+            List<Session> sessions = Enumerable.Range(0, sessionCount)
                 .Select(_ => new Session())
-                .ToArray();
+                .ToList();
 
             ValidationException exception = await Assert
                 .ThrowsAsync<ValidationException>(async () =>

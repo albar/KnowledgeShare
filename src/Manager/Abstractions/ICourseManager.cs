@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
 
@@ -12,7 +13,7 @@ namespace KnowledgeShare.Manager.Abstractions
             string description,
             ILocation location,
             Visibility visibility,
-            Session[] sessions);
+            List<Session> sessions);
 
         ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor);
         Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string id);
