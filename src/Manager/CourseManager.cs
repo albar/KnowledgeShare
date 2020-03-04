@@ -97,7 +97,7 @@ namespace KnowledgeShare.Manager
             return await _courseStore.CreateAsync(course);
         }
 
-        public ICourseCollection GetAllAccessibleTo(ICourseUser accessor)
+        public ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor)
         {
             return _courseStore.Query.Where(course => course.Visibility == Visibility.Public
                     || accessor.Role == CourseUserRole.Administrator

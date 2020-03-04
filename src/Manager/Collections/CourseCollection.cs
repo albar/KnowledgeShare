@@ -7,7 +7,7 @@ using KnowledgeShare.Manager.Abstractions;
 
 namespace KnowledgeShare.Manager.Collection
 {
-    public class CourseCollection : ICourseCollection
+    public class CourseCollection : Abstractions.ICollection<Course>
     {
         public CourseCollection(IQueryable<Course> query)
         {

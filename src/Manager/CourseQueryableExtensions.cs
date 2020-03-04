@@ -7,7 +7,7 @@ namespace KnowledgeShare.Manager
 {
     public static class CourseQueryableExtensions
     {
-        public static ICourseCollection ToCollection(
+        public static ICollection<Course> ToCollection(
             this IQueryable<Course> query)
         {
             return new CourseCollection(query);

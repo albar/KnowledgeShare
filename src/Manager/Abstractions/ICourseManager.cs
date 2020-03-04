@@ -14,6 +14,6 @@ namespace KnowledgeShare.Manager.Abstractions
             Visibility visibility,
             Session[] sessions);
 
-        ICourseCollection GetAllAccessibleTo(ICourseUser accessor);
+        ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor);
     }
 }

@@ -162,7 +162,7 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.SetupGet(s => s.Query).Returns(Queryable.AsQueryable(courses));
 
             ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
-            ICourseCollection collection = courseManager.GetAllAccessibleTo(accessor);
+            Abstractions.ICollection<Course> collection = courseManager.GetAllAccessibleToUser(accessor);
             List<Course> accessibleCourses = await collection.ToListAsync();
 
             Assert.Equal(accessibleCount, accessibleCourses.Count);

@@ -5,8 +5,8 @@ using KnowledgeShare.Entity;
 
 namespace KnowledgeShare.Manager.Abstractions
 {
-    public interface ICourseCollection
+    public interface ICollection<TEntity>
     {
-        Task<List<Course>> ToListAsync(CancellationToken token = default);
+        Task<List<TEntity>> ToListAsync(CancellationToken token = default);
     }
 }
