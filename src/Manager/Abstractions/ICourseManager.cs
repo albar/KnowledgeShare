@@ -16,6 +16,6 @@ namespace KnowledgeShare.Manager.Abstractions
             List<Session> sessions);
 
         ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor);
-        Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string id);
+        Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string courseId);
     }
 }
