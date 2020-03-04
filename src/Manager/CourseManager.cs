@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace KnowledgeShare.Manager
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
+            if (course == null)
+            {
+                throw new ArgumentNullException("course");
+            }
+
             var result = await ValidateCourseAsync(course);
             if (!result.Succeeded)
             {

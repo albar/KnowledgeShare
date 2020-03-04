@@ -129,6 +129,16 @@ namespace KnowledgeShare.Manager.Test
             Assert.Equal(errorsCount, exception.ErrorsBag.Count);
         }
 
+        [Fact]
+        public async Task Throw_ArgumentNullException_When_Passing_Null_Value()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            CourseManager manager = new CourseManager(fakeStore.Object, new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.CreateAsync(null));
+        }
+
         private static ILocation CreateOnlineLocation()
         {
             return new OnlineLocation
