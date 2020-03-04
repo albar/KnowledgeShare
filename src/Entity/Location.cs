@@ -29,10 +29,7 @@ namespace KnowledgeShare.Entity
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return Url.GetHashCode();
-            }
+            return HashCode.Combine(Url);
         }
     }
 
@@ -59,13 +56,7 @@ namespace KnowledgeShare.Entity
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hashCode = -883231652;
-                hashCode = hashCode * -1521134295 + Latitude.GetHashCode();
-                hashCode = hashCode * -1521134295 + Longitude.GetHashCode();
-                return hashCode;
-            }
+            return HashCode.Combine(Latitude, Longitude);
         }
     }
 }
