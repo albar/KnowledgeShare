@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
 
@@ -6,10 +6,6 @@ namespace KnowledgeShare.Store.Abstractions
 {
     public interface ICourseStore
     {
-        IQueryable<Course> Query { get; }
-
-        Task<Course> CreateAsync(Course course);
-        Task<Course> FindByIdAsync(string courseId);
-        Task<Course> UpdateAsync(Course course);
+        Task CreateAsync(Course course, CancellationToken token = default);
     }
 }
