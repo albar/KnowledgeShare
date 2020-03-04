@@ -227,8 +227,8 @@ namespace KnowledgeShare.Manager.Test
 
             IDictionary<string, Course> courses = new Course[]
             {
-                new Course { Author = author},
-                new Course { Author = author, Title = title},
+                new Course { Author = author, Visibility = visibility},
+                new Course { Author = author, Title = title, Visibility = visibility},
             }.ToDictionary(c => c.Id, c => c);
 
             Course course = courses.Last().Value;
