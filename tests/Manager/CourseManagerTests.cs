@@ -124,7 +124,7 @@ namespace KnowledgeShare.Manager.Test
 
             Assert.Equal(errorKeys.Length, capturedErrorsCount);
 
-            fakeCourseStore.Verify(
+            fakeCourseStore.Verify<Task<Course>>(
                 s => s.CreateAsync(It.IsAny<Course>()),
                 Times.Never);
         }
