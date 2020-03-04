@@ -10,5 +10,6 @@ namespace KnowledgeShare.Store.Abstractions
 
         Task<Course> CreateAsync(Course course);
         Task<Course> FindByIdAsync(string courseId);
+        Task<Course> UpdateAsync(Course course);
     }
 }

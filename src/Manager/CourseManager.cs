@@ -110,7 +110,18 @@ namespace KnowledgeShare.Manager
 
         public async Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string courseId)
         {
+            // should validate the accessor role
             return await _courseStore.FindByIdAsync(courseId);
+        }
+
+        public async Task<Course> UpdateAccessibleToUserAsync(
+            ICourseUser accessor,
+            string courseId,
+            UpdatableCourse updatableCourse)
+        {
+            var course = await FindAccessibleToUserByIdAsync(accessor, courseId);
+            updatableCourse.PutInto(course);
+            return await _courseStore.UpdateAsync(course);
         }
     }
 }

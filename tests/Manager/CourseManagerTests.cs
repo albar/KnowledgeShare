@@ -247,6 +247,59 @@ namespace KnowledgeShare.Manager.Test
                 Times.Once());
         }
 
+        [Theory]
+        [InlineData(CourseUserRole.Administrator)]
+        [InlineData(CourseUserRole.Administrator, true)]
+        [InlineData(CourseUserRole.Manager, true)]
+        public async Task Administrator_Or_Course_Author_Can_Update_A_Course(
+            CourseUserRole accessorRole,
+            bool selfAuthor = false)
+        {
+            ICourseUserManager userManager = new FakeCourseUserManager();
+            ICourseUser accessor = await CreateUserAsync(userManager, accessorRole);
+            ICourseUser author;
+            if (selfAuthor)
+            {
+                author = accessor;
+            }
+            else
+            {
+                author = await CreateUserAsync(userManager, CourseUserRole.Manager);
+            }
+
+            const string initialTitle = "Initial Title";
+            const string updatedTitle = "Updated Title";
+
+            Course course = new Course
+            {
+                Author = author,
+                Title = initialTitle,
+            };
+
+            var fakeCourseStore = new Mock<ICourseStore>();
+            fakeCourseStore.Setup(s => s.FindByIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(course);
+            fakeCourseStore.Setup(s => s.UpdateAsync(It.IsAny<Course>()))
+                .Returns<Course>(c =>
+                {
+                    course.Title = c.Title;
+                    return Task.FromResult(course);
+                });
+
+            ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
+
+            Course updatedCourse = await courseManager.UpdateAccessibleToUserAsync(
+                accessor,
+                course.Id,
+                new UpdatableCourse
+                {
+                    Title = updatedTitle,
+                });
+
+            Assert.Equal(updatedTitle, updatedCourse.Title);
+            fakeCourseStore.Verify(s => s.UpdateAsync(It.IsAny<Course>()), Times.Once());
+        }
+
         private static async Task<ICourseUser> CreateUserAsync(
             ICourseUserManager manager,
             CourseUserRole role)
