@@ -65,7 +65,9 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Theory]
-        [InlineData(CourseUserRole.User, null, null, null, false, Visibility.Public, 0, new string[] {"author", "title", "speaker", "location", "sessions"})]
+        [InlineData(CourseUserRole.User, null, null, null, false, Visibility.Public, 0, new string[] { "author", "title", "speaker", "location", "sessions" })]
+        [InlineData(CourseUserRole.Administrator, null, null, null, false, Visibility.Public, 0, new string[] { "title", "speaker", "location", "sessions" })]
+        [InlineData(CourseUserRole.Manager, null, null, null, false, Visibility.Public, 0, new string[] { "title", "speaker", "location", "sessions" })]
         public async Task Can_Not_Create_Course_With_Invalid_Data(
             CourseUserRole role,
             string title,
