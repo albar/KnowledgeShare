@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
 using KnowledgeShare.Manager.Abstractions;
@@ -94,6 +95,16 @@ namespace KnowledgeShare.Manager
             };
 
             return await _courseStore.CreateAsync(course);
+        }
+
+        public ICourseCollection GetAllAccessibleTo(ICourseUser accessor)
+        {
+            return _courseStore.Query.Where(course => course.Visibility == Visibility.Public
+                    || accessor.Role == CourseUserRole.Administrator
+                    || (accessor.Role == CourseUserRole.Manager && course.Author.Equals(accessor))
+                    || course.Invitee.Any(invitee => invitee.User.Equals(accessor))
+                    || course.Attendee.Any(attendee => attendee.User.Equals(accessor))
+                ).ToCollection();
         }
     }
 }

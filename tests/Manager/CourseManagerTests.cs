@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
@@ -127,6 +128,46 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.Verify<Task<Course>>(
                 s => s.CreateAsync(It.IsAny<Course>()),
                 Times.Never);
+        }
+
+        [Theory]
+        [InlineData(CourseUserRole.Administrator, 2)]
+        [InlineData(CourseUserRole.Manager, 1)]
+        [InlineData(CourseUserRole.Manager, 2, true)]
+        [InlineData(CourseUserRole.User, 1)]
+        public async Task Can_List_Courses_With_Respecting_User_Role(
+            CourseUserRole role,
+            int accessibleCount,
+            bool selfAuthor = false)
+        {
+            ICourseUserManager userManager = new FakeCourseUserManager();
+            ICourseUser accessor = await CreateUserAsync(userManager, role);
+            ICourseUser author;
+            if (selfAuthor)
+            {
+                author = accessor;
+            }
+            else
+            {
+                author = await CreateUserAsync(userManager, CourseUserRole.Manager);
+            }
+
+            List<Course> courses = new List<Course>
+            {
+                new Course {Author = author, Visibility = Visibility.Public},
+                new Course {Author = author, Visibility = Visibility.Private},
+            };
+
+            var fakeCourseStore = new Mock<ICourseStore>();
+            fakeCourseStore.SetupGet(s => s.Query).Returns(Queryable.AsQueryable(courses));
+
+            ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
+            ICourseCollection collection = courseManager.GetAllAccessibleTo(accessor);
+            List<Course> accessibleCourses = await collection.ToListAsync();
+
+            Assert.Equal(accessibleCount, accessibleCourses.Count);
+
+            fakeCourseStore.Verify<IQueryable<Course>>(s => s.Query, Times.Once());
         }
 
         private static async Task<ICourseUser> CreateUserAsync(

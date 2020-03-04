@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace KnowledgeShare.Entity
 {
@@ -12,5 +13,8 @@ namespace KnowledgeShare.Entity
         public Visibility Visibility { get; set; }
         public ILocation Location { get; set; }
         public Session[] Sessions { get; set; } = new Session[] { };
+
+        public List<Invitee> Invitee { get; } = new List<Invitee>();
+        public List<Attendee> Attendee { get; } = new List<Attendee>();
     }
 }

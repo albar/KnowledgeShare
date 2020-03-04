@@ -13,5 +13,7 @@ namespace KnowledgeShare.Manager.Abstractions
             ILocation location,
             Visibility visibility,
             Session[] sessions);
+
+        ICourseCollection GetAllAccessibleTo(ICourseUser accessor);
     }
 }
