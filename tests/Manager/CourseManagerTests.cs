@@ -162,7 +162,7 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.SetupGet(s => s.Query).Returns(Queryable.AsQueryable(courses));
 
             ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
-            Abstractions.ICollection<Course> collection = courseManager.GetAllAccessibleToUser(accessor);
+            Abstractions.ICollection<Course> collection = courseManager.GetAllAccessibleBy(accessor);
             List<Course> accessibleCourses = await collection.ToListAsync();
 
             Assert.Equal(accessibleCount, accessibleCourses.Count);
@@ -191,7 +191,7 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.SetupGet(s => s.Query).Returns(Queryable.AsQueryable(courses));
 
             ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
-            Abstractions.ICollection<Course> collection = courseManager.GetAllAccessibleToUser(author);
+            Abstractions.ICollection<Course> collection = courseManager.GetAllAccessibleBy(author);
             IPaginatedCollection<Course> paginatedCourses = await collection.PaginateAsync(page, limit);
 
             Assert.Equal(page, paginatedCourses.Page);
@@ -239,7 +239,7 @@ namespace KnowledgeShare.Manager.Test
                     Task.FromResult(courses.ContainsKey(id) ? courses[id] : null));
 
             ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
-            Course foundCourse = await courseManager.FindAccessibleToUserByIdAsync(accessor, course.Id);
+            Course foundCourse = await courseManager.FindAccessibleByAsync(accessor, course.Id);
 
             Assert.Equal(title, foundCourse.Title);
             fakeCourseStore.Verify<Task<Course>>(s =>
@@ -288,7 +288,7 @@ namespace KnowledgeShare.Manager.Test
 
             ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
 
-            Course updatedCourse = await courseManager.UpdateAccessibleToUserAsync(
+            Course updatedCourse = await courseManager.UpdateAccessibleByAsync(
                 accessor,
                 course.Id,
                 new UpdatableCourse

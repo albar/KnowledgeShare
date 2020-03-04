@@ -15,10 +15,10 @@ namespace KnowledgeShare.Manager.Abstractions
             Visibility visibility,
             List<Session> sessions);
 
-        ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor);
+        ICollection<Course> GetAllAccessibleBy(ICourseUser accessor);
 
-        Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string courseId);
+        Task<Course> FindAccessibleByAsync(ICourseUser accessor, string courseId);
 
-        Task<Course> UpdateAccessibleToUserAsync(ICourseUser acessor, string courseId, UpdatableCourse updatableCourse);
+        Task<Course> UpdateAccessibleByAsync(ICourseUser acessor, string courseId, UpdatableCourse updatableCourse);
     }
 }

@@ -98,7 +98,7 @@ namespace KnowledgeShare.Manager
             return await _courseStore.CreateAsync(course);
         }
 
-        public Abstractions.ICollection<Course> GetAllAccessibleToUser(ICourseUser accessor)
+        public Abstractions.ICollection<Course> GetAllAccessibleBy(ICourseUser accessor)
         {
             return _courseStore.Query.Where(course => course.Visibility == Visibility.Public
                     || accessor.Role == CourseUserRole.Administrator
@@ -108,18 +108,18 @@ namespace KnowledgeShare.Manager
                 ).ToCollection();
         }
 
-        public async Task<Course> FindAccessibleToUserByIdAsync(ICourseUser accessor, string courseId)
+        public async Task<Course> FindAccessibleByAsync(ICourseUser accessor, string courseId)
         {
             // should validate the accessor role
             return await _courseStore.FindByIdAsync(courseId);
         }
 
-        public async Task<Course> UpdateAccessibleToUserAsync(
+        public async Task<Course> UpdateAccessibleByAsync(
             ICourseUser accessor,
             string courseId,
             UpdatableCourse updatableCourse)
         {
-            var course = await FindAccessibleToUserByIdAsync(accessor, courseId);
+            var course = await FindAccessibleByAsync(accessor, courseId);
             updatableCourse.PutInto(course);
             return await _courseStore.UpdateAsync(course);
         }
