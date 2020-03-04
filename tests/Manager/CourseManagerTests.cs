@@ -30,9 +30,9 @@ namespace KnowledgeShare.Manager.Test
                 userManager,
                 fakeCourseStore.Object);
 
-            ICourseUser author = await userManager.CreateAsync("admin", "admin@test.com", role);
+            ICourseUser author = await CreateUserAsync(userManager, role);
             const string title = "A Course";
-            ICourseUser speaker = await userManager.CreateAsync("user", "user@test.com", CourseUserRole.User);
+            ICourseUser speaker = await CreateUserAsync(userManager, CourseUserRole.User);
             const string description = "A Description";
             ILocation location = new OnlineLocation
             {
@@ -125,6 +125,13 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.Verify(
                 s => s.CreateAsync(It.IsAny<Course>()),
                 Times.Never);
+        }
+
+        private static async Task<ICourseUser> CreateUserAsync(
+            ICourseUserManager manager,
+            CourseUserRole role)
+        {
+            return await manager.CreateAsync("fakename", "fake@mail.com", role);
         }
     }
 }
