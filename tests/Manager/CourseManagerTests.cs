@@ -170,6 +170,35 @@ namespace KnowledgeShare.Manager.Test
             fakeCourseStore.Verify<IQueryable<Course>>(s => s.Query, Times.Once());
         }
 
+        [Theory]
+        [InlineData(8, 1, 5, 5)]
+        [InlineData(8, 2, 5, 3)]
+        [InlineData(8, 3, 5, 0)]
+        public async Task Can_List_And_Paginate_Courses(
+            int total,
+            int page,
+            int limit,
+            int resultCount)
+        {
+            ICourseUserManager userManager = new FakeCourseUserManager();
+            ICourseUser author = await CreateUserAsync(userManager, CourseUserRole.Manager);
+
+            List<Course> courses = Enumerable.Range(0, total).Select(_ =>
+                    new Course { Author = author, Visibility = Visibility.Public })
+                .ToList();
+
+            var fakeCourseStore = new Mock<ICourseStore>();
+            fakeCourseStore.SetupGet(s => s.Query).Returns(Queryable.AsQueryable(courses));
+
+            ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
+            Abstractions.ICollection<Course> collection = courseManager.GetAllAccessibleToUser(author);
+            IPaginatedCollection<Course> paginatedCourses = await collection.PaginateAsync(page, limit);
+
+            Assert.Equal(page, paginatedCourses.Page);
+            Assert.Equal(limit, paginatedCourses.Limit);
+            Assert.Equal(resultCount, paginatedCourses.Items.Count());
+        }
+
         private static async Task<ICourseUser> CreateUserAsync(
             ICourseUserManager manager,
             CourseUserRole role)

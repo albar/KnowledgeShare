@@ -20,5 +20,15 @@ namespace KnowledgeShare.Manager.Collection
         {
             return await Task.Run(_query.ToList, token);
         }
+
+        public async Task<IPaginatedCollection<Course>> PaginateAsync(
+            int page, int limit, CancellationToken token = default)
+        {
+            var items = await Task.Run(() =>
+                _query.Skip(limit * (page - 1)).Take(limit).ToList(),
+                token);
+
+            return new PaginatedCourseCollection(items, page, limit);
+        }
     }
 }
