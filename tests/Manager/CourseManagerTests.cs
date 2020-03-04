@@ -199,6 +199,54 @@ namespace KnowledgeShare.Manager.Test
             Assert.Equal(resultCount, paginatedCourses.Items.Count());
         }
 
+        [Theory]
+        [InlineData(CourseUserRole.Administrator, Visibility.Public)]
+        [InlineData(CourseUserRole.Administrator, Visibility.Private)]
+        [InlineData(CourseUserRole.Manager, Visibility.Public)]
+        [InlineData(CourseUserRole.Manager, Visibility.Private, true)]
+        [InlineData(CourseUserRole.User, Visibility.Public)]
+        public async Task Can_Find_A_Course_By_id(
+            CourseUserRole role,
+            Visibility visibility,
+            bool selfAuthor = false)
+        {
+            const string title = "A Course";
+
+            ICourseUserManager userManager = new FakeCourseUserManager();
+            ICourseUser accessor = await CreateUserAsync(userManager, role);
+
+            ICourseUser author;
+            if (selfAuthor)
+            {
+                author = accessor;
+            }
+            else
+            {
+                author = await CreateUserAsync(userManager, CourseUserRole.Manager);
+            }
+
+            IDictionary<string, Course> courses = new Course[]
+            {
+                new Course { Author = author},
+                new Course { Author = author, Title = title},
+            }.ToDictionary(c => c.Id, c => c);
+
+            Course course = courses.Last().Value;
+
+            var fakeCourseStore = new Mock<ICourseStore>();
+            fakeCourseStore.Setup(s => s.FindByIdAsync(It.IsAny<string>()))
+                .Returns<string>(id =>
+                    Task.FromResult(courses.ContainsKey(id) ? courses[id] : null));
+
+            ICourseManager courseManager = new CourseManager(userManager, fakeCourseStore.Object);
+            Course foundCourse = await courseManager.FindAccessibleToUserById(accessor, course.Id);
+
+            Assert.Equal(title, foundCourse.Title);
+            fakeCourseStore.Verify<Task<Course>>(s =>
+                s.FindByIdAsync(It.IsAny<string>()),
+                Times.Once());
+        }
+
         private static async Task<ICourseUser> CreateUserAsync(
             ICourseUserManager manager,
             CourseUserRole role)

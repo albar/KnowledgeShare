@@ -106,5 +106,10 @@ namespace KnowledgeShare.Manager
                     || course.Attendee.Any(attendee => attendee.User.Equals(accessor))
                 ).ToCollection();
         }
+
+        public async Task<Course> FindAccessibleToUserById(ICourseUser accessor, string id)
+        {
+            return await _courseStore.FindByIdAsync(id);
+        }
     }
 }

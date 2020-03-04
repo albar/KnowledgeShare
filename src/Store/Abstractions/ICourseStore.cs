@@ -9,5 +9,6 @@ namespace KnowledgeShare.Store.Abstractions
         IQueryable<Course> Query { get; }
 
         Task<Course> CreateAsync(Course course);
+        Task<Course> FindByIdAsync(string id);
     }
 }
