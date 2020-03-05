@@ -9,7 +9,6 @@ namespace KnowledgeShare.Store.Abstractions
     {
         Task CreateAsync(Course course, CancellationToken token = default);
         ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default);
-        IItemCollection<Course> GetItemCollection();
         Task UpdateAsync(Course course, CancellationToken token = default);
         Task RemoveAsync(Course course, CancellationToken token = default);
     }

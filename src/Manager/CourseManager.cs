@@ -22,6 +22,8 @@ namespace KnowledgeShare.Manager
             _validators = validators;
         }
 
+        public IQueryable<Course> Courses => GetQueryableStore().Items;
+
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
@@ -47,12 +49,6 @@ namespace KnowledgeShare.Manager
             ThrowIfDisposed();
 
             return await _store.FindByIdAsync(courseId, token);
-        }
-
-        public IItemCollection<Course> GetItemCollection()
-        {
-            ThrowIfDisposed();
-            return _store.GetItemCollection();
         }
 
         public async Task UpdateAsync(Course course, CancellationToken token = default)
@@ -196,6 +192,17 @@ namespace KnowledgeShare.Manager
 
             throw new NotSupportedException(
                 $"Store is not supported to do this action. {nameof(ICourseFeedbackStore)} is not implemented");
+        }
+
+        private IQueryableStore<Course> GetQueryableStore()
+        {
+            if (_store is IQueryableStore<Course> store)
+            {
+                return store;
+            }
+
+            throw new NotSupportedException(
+                $"Store is not supported to do this action. {nameof(IQueryableStore<Course>)} is not implemented");
         }
 
         protected void ThrowIfDisposed()
