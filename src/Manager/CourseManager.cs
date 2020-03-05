@@ -28,7 +28,7 @@ namespace KnowledgeShare.Manager
 
             if (course == null)
             {
-                throw new ArgumentNullException("course");
+                throw new ArgumentNullException(nameof(course));
             }
 
             var result = await ValidateCourseAsync(course, token);
