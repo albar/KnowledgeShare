@@ -491,6 +491,7 @@ namespace KnowledgeShare.Manager.Test
                     null));
         }
 
+        [Fact]
         public async Task Can_Add_Feedback_To_A_Course()
         {
             var fakeStore = new Mock<ICourseFeedbackStore>();
