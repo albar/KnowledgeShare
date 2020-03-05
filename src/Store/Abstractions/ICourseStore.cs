@@ -8,6 +8,6 @@ namespace KnowledgeShare.Store.Abstractions
     public interface ICourseStore : IDisposable
     {
         Task CreateAsync(Course course, CancellationToken token = default);
-        ValueTask<Course> FindByIdAsync(string courseId, CancellationToken cancellationToken);
+        ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default);
     }
 }
