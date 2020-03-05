@@ -77,7 +77,8 @@ namespace KnowledgeShare.Manager
                 throw new ArgumentNullException(nameof(course));
             }
 
-            await _store.InviteUserToAsync(course, user);
+            var store = GetCourseInviteeStore();
+            await store.InviteUserToAsync(course, user);
             await UpdateCourseAsync(course);
         }
 
@@ -90,9 +91,10 @@ namespace KnowledgeShare.Manager
                 throw new ArgumentNullException(nameof(course));
             }
 
+            var store = GetCourseInviteeStore();
             foreach (var user in users)
             {
-                await _store.InviteUserToAsync(course, user);
+                await store.InviteUserToAsync(course, user);
             }
 
             await UpdateCourseAsync(course);
@@ -172,6 +174,17 @@ namespace KnowledgeShare.Manager
             }
 
             return new ValidationResult(succeeded, errorsBag);
+        }
+
+        private ICourseInviteeStore GetCourseInviteeStore()
+        {
+            if (_store is ICourseInviteeStore store)
+            {
+                return store;
+            }
+
+            throw new NotSupportedException(
+                $"Store is not supported to do this action. {nameof(ICourseInviteeStore)} is not implemented");
         }
 
         private ICourseFeedbackStore GetCourseFeedbackStore()

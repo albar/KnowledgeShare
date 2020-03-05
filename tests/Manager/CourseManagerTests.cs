@@ -412,9 +412,9 @@ namespace KnowledgeShare.Manager.Test
         [Fact]
         public async Task Can_Invite_User_To_A_Course()
         {
-            var fakeStore = new Mock<ICourseStore>();
+            var fakeCourseInviteeStore = new Mock<ICourseInviteeStore>();
 
-            fakeStore.Setup(store => store.InviteUserToAsync(
+            fakeCourseInviteeStore.Setup(store => store.InviteUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()))
@@ -429,7 +429,9 @@ namespace KnowledgeShare.Manager.Test
                     return Task.CompletedTask;
                 });
 
-            fakeStore.Setup(store => store.UpdateAsync(
+            var fakeCourseStore = fakeCourseInviteeStore.As<ICourseStore>();
+
+            fakeCourseStore.Setup(store => store.UpdateAsync(
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
@@ -442,7 +444,7 @@ namespace KnowledgeShare.Manager.Test
                 .Returns(Task.FromResult(ValidationResult.Success));
 
             CourseManager manager = new CourseManager(
-                fakeStore.Object,
+                fakeCourseStore.Object,
                 new ICourseValidator[] { fakeValidator.Object });
 
             ICourseUser user = CreateUser();
@@ -452,13 +454,13 @@ namespace KnowledgeShare.Manager.Test
 
             Assert.True(course.Invitee.Any(invitee => invitee.User.Id == user.Id));
 
-            fakeStore.Verify(store => store.InviteUserToAsync(
+            fakeCourseInviteeStore.Verify(store => store.InviteUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
 
-            fakeStore.Verify(store => store.UpdateAsync(
+            fakeCourseStore.Verify(store => store.UpdateAsync(
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
@@ -475,9 +477,9 @@ namespace KnowledgeShare.Manager.Test
         {
             const int usersCount = 10;
 
-            var fakeStore = new Mock<ICourseStore>();
+            var fakeCourseInviteeStore = new Mock<ICourseInviteeStore>();
 
-            fakeStore.Setup(store => store.InviteUserToAsync(
+            fakeCourseInviteeStore.Setup(store => store.InviteUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()))
@@ -492,7 +494,8 @@ namespace KnowledgeShare.Manager.Test
                     return Task.CompletedTask;
                 });
 
-            fakeStore.Setup(store => store.UpdateAsync(
+            var fakeCourseStore = fakeCourseInviteeStore.As<ICourseStore>();
+            fakeCourseStore.Setup(store => store.UpdateAsync(
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
@@ -505,7 +508,7 @@ namespace KnowledgeShare.Manager.Test
                 .Returns(Task.FromResult(ValidationResult.Success));
 
             CourseManager manager = new CourseManager(
-                fakeStore.Object,
+                fakeCourseStore.Object,
                 new ICourseValidator[] { fakeValidator.Object });
 
             IEnumerable<ICourseUser> users = Enumerable.Range(0, usersCount)
@@ -519,13 +522,13 @@ namespace KnowledgeShare.Manager.Test
 
             Assert.Equal(usersCount, course.Invitee.Count);
 
-            fakeStore.Verify(store => store.InviteUserToAsync(
+            fakeCourseInviteeStore.Verify(store => store.InviteUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()),
                 Times.Exactly(10));
 
-            fakeStore.Verify(store => store.UpdateAsync(
+            fakeCourseStore.Verify(store => store.UpdateAsync(
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
