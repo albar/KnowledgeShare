@@ -118,7 +118,7 @@ namespace KnowledgeShare.Manager
             var store = GetCourseFeedbackStore();
 
             await store.AddFeedbackToAsync(course, user, rate, message, token);
-            await _store.UpdateAsync(course);
+            await UpdateCourseAsync(course);
         }
 
         public async Task RemoveAsync(Course course, CancellationToken token = default)
