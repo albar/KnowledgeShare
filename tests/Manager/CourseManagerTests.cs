@@ -54,7 +54,7 @@ namespace KnowledgeShare.Manager.Test
         [InlineData(CourseUserRole.Administrator, "Title", false, 1, 1)]
         [InlineData(CourseUserRole.Administrator, "Title", false, 0, 2)]
         [InlineData(CourseUserRole.Administrator, "Title", true, 0, 1)]
-        public async Task Shoul_Validate_The_Course_When_Creating(
+        public async Task Should_Validate_The_Course_When_Creating(
             CourseUserRole authorRole,
             string title,
             bool withLocation,
