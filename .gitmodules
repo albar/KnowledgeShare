@@ -1,0 +1,3 @@
+[submodule "libs/Bunnypro.SpaService.VueCli"]
+	path = libs/Bunnypro.SpaService.VueCli
+	url = git@github.com:albar/AspNetCore-VueCliService.git
