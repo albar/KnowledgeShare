@@ -23,8 +23,8 @@ namespace KnowledgeShare.Manager
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
-            ThrowIfDisposed();
             token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (course == null)
             {
@@ -42,8 +42,8 @@ namespace KnowledgeShare.Manager
 
         public async ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default)
         {
-            ThrowIfDisposed();
             token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             return await _store.FindByIdAsync(courseId, token);
         }
