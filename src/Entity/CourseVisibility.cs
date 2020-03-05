@@ -1,6 +1,6 @@
 namespace KnowledgeShare.Entity
 {
-    public enum Visibility
+    public enum CourseVisibility
     {
         Public,
         Private,

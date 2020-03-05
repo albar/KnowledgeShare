@@ -10,7 +10,7 @@ namespace KnowledgeShare.Entity
         public string Title { get; set; }
         public virtual ICourseUser Speaker { get; set; }
         public string Description { get; set; }
-        public Visibility Visibility { get; set; }
+        public CourseVisibility Visibility { get; set; }
         public virtual ILocation Location { get; set; }
         public virtual List<Session> Sessions { get; set; } = new List<Session>();
 

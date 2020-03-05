@@ -121,7 +121,7 @@ namespace KnowledgeShare.Manager.Test
                     Speaker = speaker,
                     Location = location,
                     Sessions = sessions,
-                    Visibility = Visibility.Public,
+                    Visibility = CourseVisibility.Public,
                 }));
 
             Assert.Equal(errorsCount, exception.ErrorsBag.Count);
@@ -380,7 +380,7 @@ namespace KnowledgeShare.Manager.Test
                     Speaker = speaker,
                     Location = location,
                     Sessions = sessions,
-                    Visibility = Visibility.Public,
+                    Visibility = CourseVisibility.Public,
                 }));
 
             Assert.Equal(errorsCount, exception.ErrorsBag.Count);
