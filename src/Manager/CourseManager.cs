@@ -73,6 +73,11 @@ namespace KnowledgeShare.Manager
         {
             ThrowIfDisposed();
 
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+
             await _store.InviteUserToAsync(course, user);
             await UpdateAsync(course);
         }
@@ -80,6 +85,11 @@ namespace KnowledgeShare.Manager
         public async Task InviteUsersToAsync(Course course, IEnumerable<ICourseUser> users)
         {
             ThrowIfDisposed();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
 
             foreach (var user in users)
             {

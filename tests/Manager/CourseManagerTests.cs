@@ -451,6 +451,35 @@ namespace KnowledgeShare.Manager.Test
                 Times.Once());
         }
 
+        [Fact]
+        public async Task Throw_When_Inviting_User_With_Null_Course()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.InviteUserToAsync(null, CreateUser()));
+        }
+
+
+        [Fact]
+        public async Task Throw_When_Inviting_Multiple_Users_With_Null_Course()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.InviteUsersToAsync(
+                    null,
+                    new ICourseUser[] { CreateUser() }));
+        }
+
         private static ILocation CreateOnlineLocation()
         {
             return new OnlineLocation
