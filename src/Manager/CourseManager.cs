@@ -9,10 +9,11 @@ using KnowledgeShare.Store.Abstractions;
 
 namespace KnowledgeShare.Manager
 {
-    public class CourseManager
+    public class CourseManager : IDisposable
     {
         private readonly ICourseStore _store;
         private readonly IEnumerable<ICourseValidator> _validators;
+        private bool _disposed;
 
         public CourseManager(ICourseStore store, IEnumerable<ICourseValidator> validators)
         {
@@ -22,6 +23,7 @@ namespace KnowledgeShare.Manager
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
+            ThrowIfDisposed();
             token.ThrowIfCancellationRequested();
 
             if (course == null)
@@ -36,6 +38,15 @@ namespace KnowledgeShare.Manager
             }
 
             await _store.CreateAsync(course, token);
+        }
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _store.Dispose();
+                _disposed = true;
+            }
         }
 
         private async Task<ValidationResult> ValidateCourseAsync(Course course, CancellationToken token)
@@ -57,6 +68,14 @@ namespace KnowledgeShare.Manager
             }
 
             return ValidationResult.Success;
+        }
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
         }
     }
 }
