@@ -84,7 +84,7 @@ User
       - Permissions
         - Role: Administrator
         - Role: Manager + Creator
-    - Assign User Into
+    - Invite User Into
       - Permissions
         - Role: Administrator
         - Role: Manager + Creator

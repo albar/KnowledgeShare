@@ -315,6 +315,134 @@ namespace KnowledgeShare.Manager.Test
                 await manager.UpdateAsync(null));
         }
 
+        [Fact]
+        public async Task Can_Invite_User_To_A_Course()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            fakeStore.Setup(store => store.InviteUserToAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<ICourseUser>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns<Course, ICourseUser, CancellationToken>((course, user, _) =>
+                {
+                    course.Invitee.Add(new Invitee
+                    {
+                        Course = course,
+                        User = user,
+                    });
+
+                    return Task.CompletedTask;
+                });
+
+            fakeStore.Setup(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var fakeValidator = new Mock<ICourseValidator>();
+            fakeValidator.Setup(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(ValidationResult.Success));
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { fakeValidator.Object });
+
+            ICourseUser user = CreateUser();
+            Course course = new Course();
+
+            await manager.InviteUserToAsync(course, user);
+
+            Assert.True(course.Invitee.Any(invitee => invitee.User.Id == user.Id));
+
+            fakeStore.Verify(store => store.InviteUserToAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<ICourseUser>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+
+            fakeStore.Verify(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+
+            fakeValidator.Verify(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task Can_Invite_Multiple_Users_To_A_Course()
+        {
+            const int usersCount = 10;
+
+            var fakeStore = new Mock<ICourseStore>();
+
+            fakeStore.Setup(store => store.InviteUserToAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<ICourseUser>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns<Course, ICourseUser, CancellationToken>((course, user, _) =>
+                {
+                    course.Invitee.Add(new Invitee
+                    {
+                        Course = course,
+                        User = user,
+                    });
+
+                    return Task.CompletedTask;
+                });
+
+            fakeStore.Setup(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var fakeValidator = new Mock<ICourseValidator>();
+            fakeValidator.Setup(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(ValidationResult.Success));
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { fakeValidator.Object });
+
+            IEnumerable<ICourseUser> users = Enumerable.Range(0, usersCount)
+                .Select(_ => CreateUser());
+
+            Course course = new Course();
+
+            Assert.Equal(0, course.Invitee.Count);
+
+            await manager.InviteUsersToAsync(course, users);
+
+            Assert.Equal(usersCount, course.Invitee.Count);
+
+            fakeStore.Verify(store => store.InviteUserToAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<ICourseUser>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Exactly(10));
+
+            fakeStore.Verify(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+
+            fakeValidator.Verify(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+        }
+
         private static ILocation CreateOnlineLocation()
         {
             return new OnlineLocation
