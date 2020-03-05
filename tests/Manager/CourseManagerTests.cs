@@ -366,7 +366,7 @@ namespace KnowledgeShare.Manager.Test
 
             await manager.RegisterUserToAsync(course, user);
 
-            Assert.True(course.Registrants.Any(registrant => registrant.User.Id == user.Id));
+            Assert.Contains(course.Registrants, registrant => registrant.User.Id == user.Id);
 
             fakeCourseRegistrantStore.Verify(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
@@ -430,7 +430,7 @@ namespace KnowledgeShare.Manager.Test
 
             Course course = new Course();
 
-            Assert.Equal(0, course.Registrants.Count);
+            Assert.Empty(course.Registrants);
 
             await manager.RegisterUsersToAsync(course, users);
 
