@@ -139,7 +139,7 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
-        public async Task Throw_ArgumentNullException_When_Passing_Null_Value()
+        public async Task Throw_When_Creating_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
             CourseManager manager = new CourseManager(
@@ -312,7 +312,7 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
-        public async Task Updating_Course_Can_Not_Be_Null()
+        public async Task Throw_When_Updating_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
             CourseManager manager = new CourseManager(
