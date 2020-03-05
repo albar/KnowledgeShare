@@ -14,7 +14,7 @@ namespace KnowledgeShare.Entity
         public virtual ILocation Location { get; set; }
         public virtual List<Session> Sessions { get; set; } = new List<Session>();
 
-        public virtual List<Invitee> Invitee { get; } = new List<Invitee>();
+        public virtual List<Registrant> Registrants { get; } = new List<Registrant>();
         public virtual List<Feedback> Feedbacks { get; } = new List<Feedback>();
     }
 }

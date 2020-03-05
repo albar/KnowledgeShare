@@ -324,17 +324,17 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
-        public async Task Can_Invite_User_To_A_Course()
+        public async Task Can_Register_A_User_To_A_Course()
         {
-            var fakeCourseInviteeStore = new Mock<ICourseInviteeStore>();
+            var fakeCourseRegistrantStore = new Mock<ICourseRegistrantStore>();
 
-            fakeCourseInviteeStore.Setup(store => store.InviteUserToAsync(
+            fakeCourseRegistrantStore.Setup(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()))
                 .Returns<Course, ICourseUser, CancellationToken>((course, user, _) =>
                 {
-                    course.Invitee.Add(new Invitee
+                    course.Registrants.Add(new Registrant
                     {
                         Course = course,
                         User = user,
@@ -343,7 +343,7 @@ namespace KnowledgeShare.Manager.Test
                     return Task.CompletedTask;
                 });
 
-            var fakeCourseStore = fakeCourseInviteeStore.As<ICourseStore>();
+            var fakeCourseStore = fakeCourseRegistrantStore.As<ICourseStore>();
 
             fakeCourseStore.Setup(store => store.UpdateAsync(
                     It.IsAny<Course>(),
@@ -364,11 +364,11 @@ namespace KnowledgeShare.Manager.Test
             ICourseUser user = CreateUser();
             Course course = new Course();
 
-            await manager.InviteUserToAsync(course, user);
+            await manager.RegisterUserToAsync(course, user);
 
-            Assert.True(course.Invitee.Any(invitee => invitee.User.Id == user.Id));
+            Assert.True(course.Registrants.Any(registrant => registrant.User.Id == user.Id));
 
-            fakeCourseInviteeStore.Verify(store => store.InviteUserToAsync(
+            fakeCourseRegistrantStore.Verify(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()),
@@ -387,19 +387,19 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
-        public async Task Can_Invite_Multiple_Users_To_A_Course()
+        public async Task Can_Register_Multiple_Users_To_A_Course()
         {
             const int usersCount = 10;
 
-            var fakeCourseInviteeStore = new Mock<ICourseInviteeStore>();
+            var fakeCourseRegistrantStore = new Mock<ICourseRegistrantStore>();
 
-            fakeCourseInviteeStore.Setup(store => store.InviteUserToAsync(
+            fakeCourseRegistrantStore.Setup(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()))
                 .Returns<Course, ICourseUser, CancellationToken>((course, user, _) =>
                 {
-                    course.Invitee.Add(new Invitee
+                    course.Registrants.Add(new Registrant
                     {
                         Course = course,
                         User = user,
@@ -408,7 +408,7 @@ namespace KnowledgeShare.Manager.Test
                     return Task.CompletedTask;
                 });
 
-            var fakeCourseStore = fakeCourseInviteeStore.As<ICourseStore>();
+            var fakeCourseStore = fakeCourseRegistrantStore.As<ICourseStore>();
             fakeCourseStore.Setup(store => store.UpdateAsync(
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()))
@@ -430,13 +430,13 @@ namespace KnowledgeShare.Manager.Test
 
             Course course = new Course();
 
-            Assert.Equal(0, course.Invitee.Count);
+            Assert.Equal(0, course.Registrants.Count);
 
-            await manager.InviteUsersToAsync(course, users);
+            await manager.RegisterUsersToAsync(course, users);
 
-            Assert.Equal(usersCount, course.Invitee.Count);
+            Assert.Equal(usersCount, course.Registrants.Count);
 
-            fakeCourseInviteeStore.Verify(store => store.InviteUserToAsync(
+            fakeCourseRegistrantStore.Verify(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
                     It.IsAny<ICourseUser>(),
                     It.IsAny<CancellationToken>()),
@@ -464,7 +464,7 @@ namespace KnowledgeShare.Manager.Test
                 new ICourseValidator[] { });
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await manager.InviteUserToAsync(null, CreateUser()));
+                await manager.RegisterUserToAsync(null, CreateUser()));
         }
 
 
@@ -478,7 +478,7 @@ namespace KnowledgeShare.Manager.Test
                 new ICourseValidator[] { });
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await manager.InviteUsersToAsync(
+                await manager.RegisterUsersToAsync(
                     null,
                     new ICourseUser[] { CreateUser() }));
         }

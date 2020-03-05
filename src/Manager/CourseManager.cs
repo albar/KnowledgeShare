@@ -64,7 +64,7 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course, token);
         }
 
-        public async Task InviteUserToAsync(Course course, ICourseUser user)
+        public async Task RegisterUserToAsync(Course course, ICourseUser user)
         {
             ThrowIfDisposed();
 
@@ -73,12 +73,12 @@ namespace KnowledgeShare.Manager
                 throw new ArgumentNullException(nameof(course));
             }
 
-            var store = GetCourseInviteeStore();
-            await store.InviteUserToAsync(course, user);
+            var store = GetCourseRegistrantStore();
+            await store.RegisterUserToAsync(course, user);
             await UpdateCourseAsync(course);
         }
 
-        public async Task InviteUsersToAsync(Course course, IEnumerable<ICourseUser> users)
+        public async Task RegisterUsersToAsync(Course course, IEnumerable<ICourseUser> users)
         {
             ThrowIfDisposed();
 
@@ -87,10 +87,10 @@ namespace KnowledgeShare.Manager
                 throw new ArgumentNullException(nameof(course));
             }
 
-            var store = GetCourseInviteeStore();
+            var store = GetCourseRegistrantStore();
             foreach (var user in users)
             {
-                await store.InviteUserToAsync(course, user);
+                await store.RegisterUserToAsync(course, user);
             }
 
             await UpdateCourseAsync(course);
@@ -172,15 +172,15 @@ namespace KnowledgeShare.Manager
             return new ValidationResult(succeeded, errorsBag);
         }
 
-        private ICourseInviteeStore GetCourseInviteeStore()
+        private ICourseRegistrantStore GetCourseRegistrantStore()
         {
-            if (_store is ICourseInviteeStore store)
+            if (_store is ICourseRegistrantStore store)
             {
                 return store;
             }
 
             throw new NotSupportedException(
-                $"Store is not supported to do this action. {nameof(ICourseInviteeStore)} is not implemented");
+                $"Store is not supported to do this action. {nameof(ICourseRegistrantStore)} is not implemented");
         }
 
         private ICourseFeedbackStore GetCourseFeedbackStore()

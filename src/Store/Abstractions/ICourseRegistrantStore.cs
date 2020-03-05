@@ -4,9 +4,9 @@ using KnowledgeShare.Entity;
 
 namespace KnowledgeShare.Store.Abstractions
 {
-    public interface ICourseInviteeStore
+    public interface ICourseRegistrantStore
     {
-        Task InviteUserToAsync(
+        Task RegisterUserToAsync(
             Course course,
             ICourseUser user,
             CancellationToken token = default);

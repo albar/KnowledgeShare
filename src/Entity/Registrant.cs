@@ -2,7 +2,7 @@ using System;
 
 namespace KnowledgeShare.Entity
 {
-    public class Invitee
+    public class Registrant
     {
         public string Id { get; } = Guid.NewGuid().ToString();
         public ICourseUser User { get; set; }
