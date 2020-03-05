@@ -98,8 +98,8 @@ namespace KnowledgeShare.Manager.Test
                     return Task.FromResult(ValidationResult.Success);
                 });
 
-            ICourseUser author = CreateUser(authorRole);
-            ICourseUser speaker = CreateUser();
+            Store.Core.CourseUser author = CreateUser(authorRole);
+            Store.Core.CourseUser speaker = CreateUser();
             ILocation location = null;
             if (withLocation)
             {
@@ -271,8 +271,8 @@ namespace KnowledgeShare.Manager.Test
                     return Task.FromResult(ValidationResult.Success);
                 });
 
-            ICourseUser author = CreateUser(authorRole);
-            ICourseUser speaker = CreateUser();
+            Store.Core.CourseUser author = CreateUser(authorRole);
+            Store.Core.CourseUser speaker = CreateUser();
             ILocation location = null;
             if (withLocation)
             {
@@ -328,9 +328,9 @@ namespace KnowledgeShare.Manager.Test
 
             fakeCourseRegistrantStore.Setup(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<CancellationToken>()))
-                .Returns<Course, ICourseUser, CancellationToken>((course, user, _) =>
+                .Returns<Course, Store.Core.CourseUser, CancellationToken>((course, user, _) =>
                 {
                     course.Registrants.Add(new Registrant
                     {
@@ -359,7 +359,7 @@ namespace KnowledgeShare.Manager.Test
                 fakeCourseStore.Object,
                 new ICourseValidator[] { fakeValidator.Object });
 
-            ICourseUser user = CreateUser();
+            Store.Core.CourseUser user = CreateUser();
             Course course = new Course();
 
             await manager.RegisterUserToAsync(course, user);
@@ -368,7 +368,7 @@ namespace KnowledgeShare.Manager.Test
 
             fakeCourseRegistrantStore.Verify(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
 
@@ -393,9 +393,9 @@ namespace KnowledgeShare.Manager.Test
 
             fakeCourseRegistrantStore.Setup(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<CancellationToken>()))
-                .Returns<Course, ICourseUser, CancellationToken>((course, user, _) =>
+                .Returns<Course, Store.Core.CourseUser, CancellationToken>((course, user, _) =>
                 {
                     course.Registrants.Add(new Registrant
                     {
@@ -423,7 +423,7 @@ namespace KnowledgeShare.Manager.Test
                 fakeCourseStore.Object,
                 new ICourseValidator[] { fakeValidator.Object });
 
-            IEnumerable<ICourseUser> users = Enumerable.Range(0, usersCount)
+            IEnumerable<Store.Core.CourseUser> users = Enumerable.Range(0, usersCount)
                 .Select(_ => CreateUser());
 
             Course course = new Course();
@@ -436,7 +436,7 @@ namespace KnowledgeShare.Manager.Test
 
             fakeCourseRegistrantStore.Verify(store => store.RegisterUserToAsync(
                     It.IsAny<Course>(),
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<CancellationToken>()),
                 Times.Exactly(10));
 
@@ -481,7 +481,7 @@ namespace KnowledgeShare.Manager.Test
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.RegisterUsersToAsync(
                     null,
-                    new ICourseUser[] { CreateUser() }));
+                    new Store.Core.CourseUser[] { CreateUser() }));
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.RegisterUsersToAsync(
@@ -495,7 +495,7 @@ namespace KnowledgeShare.Manager.Test
             var fakeStore = new Mock<ICourseFeedbackStore>();
             fakeStore.Setup(store => store.AddFeedbackToAsync(
                     It.IsAny<Course>(),
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<FeedbackRate>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
@@ -513,7 +513,7 @@ namespace KnowledgeShare.Manager.Test
 
             fakeStore.Verify(store => store.AddFeedbackToAsync(
                     It.IsAny<Course>(),
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<FeedbackRate>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()),
@@ -602,7 +602,7 @@ namespace KnowledgeShare.Manager.Test
             };
         }
 
-        private static ICourseUser CreateUser(CourseUserRole role = CourseUserRole.User)
+        private static CourseUser CreateUser(CourseUserRole role = CourseUserRole.User)
         {
             return new CourseUser
             {
@@ -610,14 +610,6 @@ namespace KnowledgeShare.Manager.Test
                 Email = "fake@mail.com",
                 Role = role,
             };
-        }
-
-        private class CourseUser : ICourseUser
-        {
-            public string Id { get; } = Guid.NewGuid().ToString();
-            public string Username { get; set; }
-            public string Email { get; set; }
-            public CourseUserRole Role { get; set; }
         }
     }
 }

@@ -16,19 +16,19 @@ namespace KnowledgeShare.Manager.Test
         {
             var fakeCourseUserStore = new Mock<ICourseUserRoleStore>();
             fakeCourseUserStore.Setup(store => store.SetCourseUserRoleAsync(
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<CourseUserRole>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            CourseUserManager<FakeCourseUser> manager = new CourseUserManager<FakeCourseUser>(
-                fakeCourseUserStore.As<IUserStore<FakeCourseUser>>().Object,
+            CourseUserManager<CourseUser> manager = new CourseUserManager<CourseUser>(
+                fakeCourseUserStore.As<IUserStore<CourseUser>>().Object,
                 null, null, null, null, null, null, null, null);
 
             await manager.SetCourseUserRoleAsync(CreateUser(), CourseUserRole.Manager);
 
             fakeCourseUserStore.Verify(store => store.SetCourseUserRoleAsync(
-                    It.IsAny<ICourseUser>(),
+                    It.IsAny<Store.Core.CourseUser>(),
                     It.IsAny<CourseUserRole>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
@@ -37,9 +37,9 @@ namespace KnowledgeShare.Manager.Test
         [Fact]
         public async Task Throw_When_Changing_Role_With_Null_User()
         {
-            var fakeUserStore = new Mock<IUserStore<FakeCourseUser>>();
+            var fakeUserStore = new Mock<IUserStore<CourseUser>>();
 
-            CourseUserManager<FakeCourseUser> manager = new CourseUserManager<FakeCourseUser>(
+            CourseUserManager<CourseUser> manager = new CourseUserManager<CourseUser>(
                 fakeUserStore.Object,
                 null, null, null, null, null, null, null, null);
 
@@ -47,23 +47,14 @@ namespace KnowledgeShare.Manager.Test
                 await manager.SetCourseUserRoleAsync(null, CourseUserRole.Manager));
         }
 
-        private static FakeCourseUser CreateUser(CourseUserRole role = CourseUserRole.User)
+        private static CourseUser CreateUser(CourseUserRole role = CourseUserRole.User)
         {
-            return new FakeCourseUser
+            return new CourseUser
             {
                 Username = "fake",
                 Email = "fake@mail.com",
                 Role = role,
             };
-        }
-
-        public class FakeCourseUser : ICourseUser
-        {
-            public string Id { get; } = Guid.NewGuid().ToString();
-
-            public string Username { get; set; }
-            public string Email { get; set; }
-            public CourseUserRole Role { get; set; }
         }
     }
 }

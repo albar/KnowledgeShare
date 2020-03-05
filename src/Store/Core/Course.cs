@@ -6,9 +6,9 @@ namespace KnowledgeShare.Store.Core
     public class Course
     {
         public string Id { get; } = Guid.NewGuid().ToString();
-        public virtual ICourseUser Author { get; set; }
+        public virtual CourseUser Author { get; set; }
         public string Title { get; set; }
-        public virtual ICourseUser Speaker { get; set; }
+        public virtual CourseUser Speaker { get; set; }
         public string Description { get; set; }
         public CourseVisibility Visibility { get; set; }
         public virtual ILocation Location { get; set; }

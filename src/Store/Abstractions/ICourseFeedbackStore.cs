@@ -8,7 +8,7 @@ namespace KnowledgeShare.Store.Abstractions
     {
         Task AddFeedbackToAsync(
             Course course,
-            ICourseUser user,
+            CourseUser user,
             FeedbackRate rate,
             string message,
             CancellationToken token = default);

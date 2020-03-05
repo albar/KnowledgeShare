@@ -8,7 +8,7 @@ namespace KnowledgeShare.Store.Abstractions
     {
         Task RegisterUserToAsync(
             Course course,
-            ICourseUser user,
+            CourseUser user,
             CancellationToken token = default);
     }
 }

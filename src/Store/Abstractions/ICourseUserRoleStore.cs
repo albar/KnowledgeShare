@@ -7,7 +7,7 @@ namespace KnowledgeShare.Store.Abstractions
     public interface ICourseUserRoleStore
     {
         Task SetCourseUserRoleAsync(
-            ICourseUser user,
+            CourseUser user,
             CourseUserRole role,
             CancellationToken token = default);
     }

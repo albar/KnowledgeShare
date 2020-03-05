@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace KnowledgeShare.Manager
 {
-    public class CourseUserManager<TUser> : UserManager<TUser> where TUser : class, ICourseUser
+    public class CourseUserManager<TUser> : UserManager<TUser> where TUser : CourseUser
     {
         public CourseUserManager(
             IUserStore<TUser> store,

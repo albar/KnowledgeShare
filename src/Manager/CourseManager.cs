@@ -64,7 +64,7 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course, token);
         }
 
-        public async Task RegisterUserToAsync(Course course, ICourseUser user)
+        public async Task RegisterUserToAsync(Course course, CourseUser user)
         {
             ThrowIfDisposed();
 
@@ -82,7 +82,7 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course);
         }
 
-        public async Task RegisterUsersToAsync(Course course, IEnumerable<ICourseUser> users)
+        public async Task RegisterUsersToAsync(Course course, IEnumerable<CourseUser> users)
         {
             ThrowIfDisposed();
 
@@ -106,7 +106,7 @@ namespace KnowledgeShare.Manager
 
         public async Task AddFeedbackToAsync(
             Course course,
-            ICourseUser user,
+            CourseUser user,
             FeedbackRate rate,
             string message,
             CancellationToken token = default)
