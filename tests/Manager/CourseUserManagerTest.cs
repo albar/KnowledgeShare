@@ -25,8 +25,7 @@ namespace KnowledgeShare.Manager.Test
                 fakeCourseUserStore.As<IUserStore<FakeCourseUser>>().Object,
                 null, null, null, null, null, null, null, null);
 
-            var user = CreateUser();
-            await manager.SetCourseUserRoleAsync(user, CourseUserRole.Manager);
+            await manager.SetCourseUserRoleAsync(CreateUser(), CourseUserRole.Manager);
 
             fakeCourseUserStore.Verify(store => store.SetCourseUserRoleAsync(
                     It.IsAny<ICourseUser>(),
