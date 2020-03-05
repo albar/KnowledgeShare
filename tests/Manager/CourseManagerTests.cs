@@ -176,13 +176,8 @@ namespace KnowledgeShare.Manager.Test
                 Times.Once());
         }
 
-        [Theory]
-        [InlineData(CourseUserRole.Administrator)]
-        [InlineData(CourseUserRole.Administrator, true)]
-        [InlineData(CourseUserRole.Manager, true)]
-        public async Task Administrator_Or_Course_Author_Can_Update_A_Course(
-            CourseUserRole updatorRole,
-            bool selfAuthor = false)
+        [Fact]
+        public async Task Can_Update_A_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
             fakeStore.Setup(store => store.UpdateAsync(
@@ -190,13 +185,26 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
+            var fakeValidator = new Mock<ICourseValidator>();
+            fakeValidator.Setup(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(ValidationResult.Success));
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { fakeValidator.Object });
 
             await manager.UpdateAsync(new Course());
 
             fakeStore.Verify(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+
+            fakeValidator.Verify(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
