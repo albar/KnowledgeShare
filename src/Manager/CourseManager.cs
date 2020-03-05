@@ -48,6 +48,12 @@ namespace KnowledgeShare.Manager
             return await _store.FindByIdAsync(courseId, token);
         }
 
+        public IItemCollection<Course> GetItemCollection()
+        {
+            ThrowIfDisposed();
+            return _store.GetItemCollection();
+        }
+
         public async Task UpdateAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
