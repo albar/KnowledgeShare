@@ -67,9 +67,7 @@ namespace KnowledgeShare.Manager
             await _store.UpdateAsync(course, token);
         }
 
-        public async Task InviteUserToAsync(
-            Course course,
-            ICourseUser user)
+        public async Task InviteUserToAsync(Course course, ICourseUser user)
         {
             ThrowIfDisposed();
 
