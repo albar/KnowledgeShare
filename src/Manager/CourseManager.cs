@@ -132,6 +132,7 @@ namespace KnowledgeShare.Manager
 
         private async Task<ValidationResult> ValidateCourseAsync(Course course, CancellationToken token)
         {
+            var succeeded = true;
             var errorsBag = new ValidationErrorsBag();
 
             foreach (var validator in _validators)
@@ -139,16 +140,12 @@ namespace KnowledgeShare.Manager
                 var result = await validator.ValidateAsync(this, course, token);
                 if (!result.Succeeded)
                 {
+                    succeeded = false;
                     errorsBag.Append(result.ErrorsBag);
                 }
             }
 
-            if (errorsBag.Count > 0)
-            {
-                return ValidationResult.Failed(errorsBag);
-            }
-
-            return ValidationResult.Success;
+            return new ValidationResult(succeeded, errorsBag);
         }
 
         protected void ThrowIfDisposed()

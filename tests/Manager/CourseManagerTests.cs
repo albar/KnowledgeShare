@@ -94,7 +94,7 @@ namespace KnowledgeShare.Manager.Test
 
                     if (bag.Count > 0)
                     {
-                        return Task.FromResult(ValidationResult.Failed(bag));
+                        return Task.FromResult(ValidationResult.FromErrorsBag(bag));
                     }
 
                     return Task.FromResult(ValidationResult.Success);
@@ -353,7 +353,7 @@ namespace KnowledgeShare.Manager.Test
 
                     if (bag.Count > 0)
                     {
-                        return Task.FromResult(ValidationResult.Failed(bag));
+                        return Task.FromResult(ValidationResult.FromErrorsBag(bag));
                     }
 
                     return Task.FromResult(ValidationResult.Success);
