@@ -480,6 +480,40 @@ namespace KnowledgeShare.Manager.Test
                     new ICourseUser[] { CreateUser() }));
         }
 
+        [Fact]
+        public async Task Can_Remove_A_Course()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            fakeStore.Setup(store => store.RemoveAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await manager.RemoveAsync(new Course());
+
+            fakeStore.Verify(store => store.RemoveAsync(
+                It.IsAny<Course>(),
+                It.IsAny<CancellationToken>()));
+        }
+
+        [Fact]
+        public async Task Throw_When_Removing_Null_Course()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.RemoveAsync(null));
+        }
+
         private static ILocation CreateOnlineLocation()
         {
             return new OnlineLocation

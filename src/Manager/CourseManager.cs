@@ -99,6 +99,19 @@ namespace KnowledgeShare.Manager
             await UpdateAsync(course);
         }
 
+        public async Task RemoveAsync(Course course, CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+
+            await _store.RemoveAsync(course);
+        }
+
         public void Dispose()
         {
             if (!_disposed)
