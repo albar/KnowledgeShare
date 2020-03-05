@@ -15,6 +15,6 @@ namespace KnowledgeShare.Entity
         public virtual List<Session> Sessions { get; set; } = new List<Session>();
 
         public virtual List<Invitee> Invitee { get; } = new List<Invitee>();
-        public virtual List<Attendee> Attendee { get; } = new List<Attendee>();
+        public virtual List<Feedback> Feedbacks { get; } = new List<Feedback>();
     }
 }
