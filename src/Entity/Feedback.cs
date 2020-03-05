@@ -8,6 +8,6 @@ namespace KnowledgeShare.Entity
         public Course Course { get; set; }
         public ICourseUser User { get; set; }
         public FeedbackRate Rate { get; set; }
-        public string Note { get; set; }
+        public string Message { get; set; }
     }
 }

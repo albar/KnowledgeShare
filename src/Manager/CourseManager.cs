@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using KnowledgeShare.Entity;
@@ -97,6 +98,31 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course);
         }
 
+        public async Task AddFeedbackToAsync(
+            Course course,
+            ICourseUser user,
+            FeedbackRate rate,
+            string message,
+            CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var store = GetCourseFeedbackStore();
+
+            await store.AddFeedbackToAsync(course, user, rate, message, token);
+            await _store.UpdateAsync(course);
+        }
+
         public async Task RemoveAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
@@ -146,6 +172,17 @@ namespace KnowledgeShare.Manager
             }
 
             return new ValidationResult(succeeded, errorsBag);
+        }
+
+        private ICourseFeedbackStore GetCourseFeedbackStore()
+        {
+            if (_store is ICourseFeedbackStore store)
+            {
+                return store;
+            }
+
+            throw new NotSupportedException(
+                $"Store is not supported to do this action. {nameof(ICourseFeedbackStore)} is not implemented");
         }
 
         protected void ThrowIfDisposed()

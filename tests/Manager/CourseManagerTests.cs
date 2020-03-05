@@ -566,6 +566,75 @@ namespace KnowledgeShare.Manager.Test
                     new ICourseUser[] { CreateUser() }));
         }
 
+        public async Task Can_Add_Feedback_To_A_Course()
+        {
+            var fakeStore = new Mock<ICourseFeedbackStore>();
+            fakeStore.Setup(store => store.AddFeedbackToAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<ICourseUser>(),
+                    It.IsAny<FeedbackRate>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            CourseManager manager = new CourseManager(
+                fakeStore.As<ICourseStore>().Object,
+                new ICourseValidator[] { });
+
+            await manager.AddFeedbackToAsync(
+                new Course(),
+                CreateUser(),
+                FeedbackRate.Good,
+                "");
+
+            fakeStore.Verify(store => store.AddFeedbackToAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<ICourseUser>(),
+                    It.IsAny<FeedbackRate>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task Throw_When_Trying_To_Add_Feedback_With_Null()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.AddFeedbackToAsync(
+                    null,
+                    CreateUser(),
+                    FeedbackRate.Good,
+                    ""));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.AddFeedbackToAsync(
+                    new Course(),
+                    null,
+                    FeedbackRate.Good,
+                    ""));
+        }
+
+        [Fact]
+        public async Task Throw_When_Trying_To_Add_Feedback_But_Store_Not_Implement_Related_Interface()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<NotSupportedException>(async () =>
+                await manager.AddFeedbackToAsync(
+                    new Course(),
+                    CreateUser(),
+                    FeedbackRate.Good,
+                    ""));
+        }
+
         [Fact]
         public async Task Can_Remove_A_Course()
         {
