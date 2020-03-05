@@ -14,10 +14,8 @@ namespace KnowledgeShare.Manager.Test
 {
     public class CourseManagerTests
     {
-        [Theory]
-        [InlineData(CourseUserRole.Administrator)]
-        [InlineData(CourseUserRole.Manager)]
-        public async Task Can_Create_A_Course(CourseUserRole role)
+        [Fact]
+        public async Task Can_Create_A_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
             fakeStore.Setup(store => store.CreateAsync(
