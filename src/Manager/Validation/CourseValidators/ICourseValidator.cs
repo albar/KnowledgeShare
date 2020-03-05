@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using KnowledgeShare.Entity;
+using KnowledgeShare.Store.Core;
 
 namespace KnowledgeShare.Manager.Validation.CourseValidators
 {

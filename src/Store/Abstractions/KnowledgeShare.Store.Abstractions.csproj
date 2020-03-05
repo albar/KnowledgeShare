@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Entity\KnowledgeShare.Entity.csproj" />
+    <ProjectReference Include="..\Core\KnowledgeShare.Store.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

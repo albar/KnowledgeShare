@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KnowledgeShare.Entity
+namespace KnowledgeShare.Store.Core
 {
     public class Course
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace KnowledgeShare.Entity
+namespace KnowledgeShare.Store.Core
 {
     public interface ILocation : IEquatable<ILocation>
     {

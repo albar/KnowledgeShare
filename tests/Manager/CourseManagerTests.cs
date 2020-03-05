@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using KnowledgeShare.Entity;
+using KnowledgeShare.Store.Core;
 using KnowledgeShare.Manager.Validation;
 using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Store.Abstractions;

@@ -1,4 +1,4 @@
-namespace KnowledgeShare.Entity
+namespace KnowledgeShare.Store.Core
 {
     public enum FeedbackRate
     {
