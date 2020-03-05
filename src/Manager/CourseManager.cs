@@ -48,6 +48,25 @@ namespace KnowledgeShare.Manager
             return await _store.FindByIdAsync(courseId, token);
         }
 
+        public async Task UpdateAsync(Course course, CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+
+            var result = await ValidateCourseAsync(course, token);
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(result.ErrorsBag);
+            }
+
+            await _store.UpdateAsync(course, token);
+        }
+
         public void Dispose()
         {
             if (!_disposed)

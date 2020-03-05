@@ -176,6 +176,145 @@ namespace KnowledgeShare.Manager.Test
                 Times.Once());
         }
 
+        [Theory]
+        [InlineData(CourseUserRole.Administrator)]
+        [InlineData(CourseUserRole.Administrator, true)]
+        [InlineData(CourseUserRole.Manager, true)]
+        public async Task Administrator_Or_Course_Author_Can_Update_A_Course(
+            CourseUserRole updatorRole,
+            bool selfAuthor = false)
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            fakeStore.Setup(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await manager.UpdateAsync(new Course());
+
+            fakeStore.Verify(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+        }
+
+        [Theory]
+        [InlineData(CourseUserRole.User, "Title", true, 1, 1)]
+        [InlineData(CourseUserRole.User, null, true, 1, 2)]
+        [InlineData(CourseUserRole.User, null, false, 1, 3)]
+        [InlineData(CourseUserRole.User, null, false, 0, 4)]
+        [InlineData(CourseUserRole.Manager, null, true, 1, 1)]
+        [InlineData(CourseUserRole.Manager, null, false, 1, 2)]
+        [InlineData(CourseUserRole.Manager, null, false, 0, 3)]
+        [InlineData(CourseUserRole.Manager, "Title", false, 1, 1)]
+        [InlineData(CourseUserRole.Manager, "Title", false, 0, 2)]
+        [InlineData(CourseUserRole.Manager, "Title", true, 0, 1)]
+        [InlineData(CourseUserRole.Administrator, null, true, 1, 1)]
+        [InlineData(CourseUserRole.Administrator, null, false, 1, 2)]
+        [InlineData(CourseUserRole.Administrator, null, false, 0, 3)]
+        [InlineData(CourseUserRole.Administrator, "Title", false, 1, 1)]
+        [InlineData(CourseUserRole.Administrator, "Title", false, 0, 2)]
+        [InlineData(CourseUserRole.Administrator, "Title", true, 0, 1)]
+        public async Task Should_Validate_The_Course_When_Updating(
+            CourseUserRole authorRole,
+            string title,
+            bool withLocation,
+            int sessionsCount,
+            int errorsCount)
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            fakeStore.Setup(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var fakeValidator = new Mock<ICourseValidator>();
+            fakeValidator.Setup(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns<CourseManager, Course, CancellationToken>((_, course, __) =>
+                {
+                    ValidationErrorsBag bag = new ValidationErrorsBag();
+                    if (course.Author == null || course.Author.Role == CourseUserRole.User)
+                    {
+                        bag.Add("Author");
+                    }
+                    if (string.IsNullOrWhiteSpace(course.Title))
+                    {
+                        bag.Add("Title");
+                    }
+                    if (course.Location == null)
+                    {
+                        bag.Add("Location");
+                    }
+                    if (course.Sessions == null || course.Sessions.Count < 1)
+                    {
+                        bag.Add("Session");
+                    }
+
+                    if (bag.Count > 0)
+                    {
+                        return Task.FromResult(ValidationResult.Failed(bag));
+                    }
+
+                    return Task.FromResult(ValidationResult.Success);
+                });
+
+            ICourseUser author = CreateUser(authorRole);
+            ICourseUser speaker = CreateUser();
+            ILocation location = null;
+            if (withLocation)
+            {
+                location = CreateOnlineLocation();
+            }
+            List<Session> sessions = Enumerable.Range(0, sessionsCount)
+                .Select(_ => new Session())
+                .ToList();
+
+            CourseManager manager = new CourseManager(fakeStore.Object, new ICourseValidator[] { fakeValidator.Object });
+
+            ValidationException exception = await Assert.ThrowsAsync<ValidationException>(async () =>
+                await manager.UpdateAsync(new Course
+                {
+                    Author = author,
+                    Title = title,
+                    Speaker = speaker,
+                    Location = location,
+                    Sessions = sessions,
+                    Visibility = Visibility.Public,
+                }));
+
+            Assert.Equal(errorsCount, exception.ErrorsBag.Count);
+
+            fakeStore.Verify(store => store.UpdateAsync(
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Never());
+
+            fakeValidator.Verify(validator => validator.ValidateAsync(
+                    It.IsAny<CourseManager>(),
+                    It.IsAny<Course>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task Updating_Course_Can_Not_Be_Null()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.UpdateAsync(null));
+        }
+
         private static ILocation CreateOnlineLocation()
         {
             return new OnlineLocation
