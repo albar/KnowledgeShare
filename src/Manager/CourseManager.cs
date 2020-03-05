@@ -58,13 +58,7 @@ namespace KnowledgeShare.Manager
                 throw new ArgumentNullException(nameof(course));
             }
 
-            var result = await ValidateCourseAsync(course, token);
-            if (!result.Succeeded)
-            {
-                throw new ValidationException(result.ErrorsBag);
-            }
-
-            await _store.UpdateAsync(course, token);
+            await UpdateCourseAsync(course, token);
         }
 
         public async Task InviteUserToAsync(Course course, ICourseUser user)
@@ -77,7 +71,7 @@ namespace KnowledgeShare.Manager
             }
 
             await _store.InviteUserToAsync(course, user);
-            await UpdateAsync(course);
+            await UpdateCourseAsync(course);
         }
 
         public async Task InviteUsersToAsync(Course course, IEnumerable<ICourseUser> users)
@@ -94,7 +88,7 @@ namespace KnowledgeShare.Manager
                 await _store.InviteUserToAsync(course, user);
             }
 
-            await UpdateAsync(course);
+            await UpdateCourseAsync(course);
         }
 
         public async Task RemoveAsync(Course course, CancellationToken token = default)
@@ -117,6 +111,17 @@ namespace KnowledgeShare.Manager
                 _store.Dispose();
                 _disposed = true;
             }
+        }
+
+        private async Task UpdateCourseAsync(Course course, CancellationToken token = default)
+        {
+            var result = await ValidateCourseAsync(course, token);
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(result.ErrorsBag);
+            }
+
+            await _store.UpdateAsync(course, token);
         }
 
         private async Task<ValidationResult> ValidateCourseAsync(Course course, CancellationToken token)
