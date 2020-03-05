@@ -455,7 +455,7 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
-        public async Task Throw_When_Inviting_User_With_Null_Course()
+        public async Task Throw_When_Registering_User_With_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
 
@@ -465,11 +465,14 @@ namespace KnowledgeShare.Manager.Test
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.RegisterUserToAsync(null, CreateUser()));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.RegisterUserToAsync(new Course(), null));
         }
 
 
         [Fact]
-        public async Task Throw_When_Inviting_Multiple_Users_With_Null_Course()
+        public async Task Throw_When_Registering_Multiple_Users_With_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
 
@@ -481,6 +484,11 @@ namespace KnowledgeShare.Manager.Test
                 await manager.RegisterUsersToAsync(
                     null,
                     new ICourseUser[] { CreateUser() }));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await manager.RegisterUsersToAsync(
+                    new Course(),
+                    null));
         }
 
         public async Task Can_Add_Feedback_To_A_Course()

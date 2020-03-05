@@ -72,6 +72,10 @@ namespace KnowledgeShare.Manager
             {
                 throw new ArgumentNullException(nameof(course));
             }
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
 
             var store = GetCourseRegistrantStore();
             await store.RegisterUserToAsync(course, user);
@@ -86,9 +90,13 @@ namespace KnowledgeShare.Manager
             {
                 throw new ArgumentNullException(nameof(course));
             }
+            if (users == null)
+            {
+                throw new ArgumentNullException(nameof(users));
+            }
 
             var store = GetCourseRegistrantStore();
-            foreach (var user in users)
+            foreach (var user in users.Where(user => user is { }))
             {
                 await store.RegisterUserToAsync(course, user);
             }
