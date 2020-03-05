@@ -150,6 +150,27 @@ namespace KnowledgeShare.Manager.Test
                 await manager.CreateAsync(null));
         }
 
+        [Fact]
+        public async Task Can_Find_A_Course_By_Id()
+        {
+            Course course = new Course { };
+
+            var fakeStore = new Mock<ICourseStore>();
+            fakeStore.Setup(s => s.FindByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns<string, CancellationToken>((id, _) =>
+                    new ValueTask<Course>(id == course.Id ? course : null));
+
+            CourseManager manager = new CourseManager(fakeStore.Object, new ICourseValidator[] { });
+
+            Course foundCourse = await manager.FindByIdAsync(course.Id);
+
+            Assert.Equal(course.Id, foundCourse.Id);
+
+            fakeStore.Verify(s =>
+                s.FindByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                Times.Once());
+        }
+
         private static ILocation CreateOnlineLocation()
         {
             return new OnlineLocation

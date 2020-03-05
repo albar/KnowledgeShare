@@ -40,6 +40,14 @@ namespace KnowledgeShare.Manager
             await _store.CreateAsync(course, token);
         }
 
+        public async ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default)
+        {
+            ThrowIfDisposed();
+            token.ThrowIfCancellationRequested();
+
+            return await _store.FindByIdAsync(courseId, token);
+        }
+
         public void Dispose()
         {
             if (!_disposed)
