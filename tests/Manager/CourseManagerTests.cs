@@ -43,7 +43,9 @@ namespace KnowledgeShare.Manager.Test
                 Visibility = visibility,
             });
 
-            fakeStore.VerifyAll();
+            fakeStore.Verify(s =>
+                 s.CreateAsync(It.IsAny<Course>(), It.IsAny<CancellationToken>()),
+                 Times.Once());
         }
 
         [Theory]
@@ -128,6 +130,14 @@ namespace KnowledgeShare.Manager.Test
                 }));
 
             Assert.Equal(errorsCount, exception.ErrorsBag.Count);
+
+            fakeStore.Verify(s =>
+                s.CreateAsync(It.IsAny<Course>(), It.IsAny<CancellationToken>()),
+                Times.Never());
+
+            fakeValidator.Verify(validator =>
+                validator.ValidateAsync(It.IsAny<CourseManager>(), It.IsAny<Course>(), It.IsAny<CancellationToken>()),
+                Times.Once());
         }
 
         [Fact]
