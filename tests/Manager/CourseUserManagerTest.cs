@@ -35,7 +35,7 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
-        public async Task Throw_When_Changing_Role_With_Null()
+        public async Task Throw_When_Changing_Role_With_Null_User()
         {
             var fakeUserStore = new Mock<IUserStore<FakeCourseUser>>();
 
