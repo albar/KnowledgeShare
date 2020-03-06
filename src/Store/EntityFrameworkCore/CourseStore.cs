@@ -30,15 +30,15 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             return new ValueTask<Course>(Courses.Where(course => course.Id == courseId).SingleOrDefaultAsync(token));
         }
 
-        public async Task RemoveAsync(Course course, CancellationToken token = default)
-        {
-            _database.Remove(course);
-            await SaveChangeAsync(token);
-        }
-
         public async Task UpdateAsync(Course course, CancellationToken token = default)
         {
             _database.Update(course);
+            await SaveChangeAsync(token);
+        }
+
+        public async Task RemoveAsync(Course course, CancellationToken token = default)
+        {
+            _database.Remove(course);
             await SaveChangeAsync(token);
         }
 
