@@ -10,9 +10,9 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 {
     public class CourseStore : ICourseStore
     {
-        private readonly DbContext _database;
+        private readonly CourseDbContext _database;
 
-        public CourseStore(DbContext database)
+        public CourseStore(CourseDbContext database)
         {
             _database = database;
         }
