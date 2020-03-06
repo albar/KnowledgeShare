@@ -17,13 +17,13 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             _database = database;
         }
 
+        protected DbSet<Course> Courses => _database.Set<Course>();
+
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
             _database.Add(course);
             await SaveChangeAsync(token);
         }
-
-        protected DbSet<Course> Courses => _database.Set<Course>();
 
         public ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default)
         {
