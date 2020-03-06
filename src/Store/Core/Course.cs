@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace KnowledgeShare.Store.Core
 {
@@ -38,7 +38,7 @@ namespace KnowledgeShare.Store.Core
                 return null;
             }
 
-            return _locationCache ??= (ILocation)JsonConvert.DeserializeObject(
+            return _locationCache ??= (ILocation)JsonSerializer.Deserialize(
                 _location, Type.GetType(_locationType));
         }
 
@@ -54,7 +54,7 @@ namespace KnowledgeShare.Store.Core
             }
 
             _locationType = location.GetType().AssemblyQualifiedName;
-            _location = JsonConvert.SerializeObject(location);
+            _location = JsonSerializer.Serialize(location);
         }
     }
 }

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using KnowledgeShare.Store.Core;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
@@ -36,8 +36,8 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 
                 entity.Property(course => course.Sessions)
                     .HasConversion(
-                        value => JsonConvert.SerializeObject(value),
-                        value => JsonConvert.DeserializeObject<List<Session>>(value));
+                        value => JsonSerializer.Serialize(value, null),
+                        value => JsonSerializer.Deserialize<List<Session>>(value, null));
             });
 
             builder.Entity<Registrant>(entity =>
