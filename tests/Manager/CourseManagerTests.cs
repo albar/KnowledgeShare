@@ -520,6 +520,39 @@ namespace KnowledgeShare.Manager.Test
                 manager.GetReigstrants(null));
         }
 
+
+
+        [Fact]
+        public void Can_Get_Queryable_Feedback()
+        {
+            var fakeStore = new Mock<ICourseFeedbackStore>();
+            fakeStore.Setup(store => store.GetFeedbacks(It.IsAny<Course>()))
+                .Returns(It.IsAny<IQueryable<Feedback>>());
+
+            CourseManager manager = new CourseManager(
+                fakeStore.As<ICourseStore>().Object,
+                new ICourseValidator[] { });
+
+            IQueryable<Feedback> _ = manager.GetFeedbacks(new Course());
+
+            fakeStore.Verify(
+                store => store.GetFeedbacks(It.IsAny<Course>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public void Throw_When_Get_Feedback_Registrants_With_Null()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            Assert.Throws<ArgumentNullException>(() =>
+                manager.GetFeedbacks(null));
+        }
+
         [Fact]
         public async Task Can_Add_Feedback_To_A_Course()
         {

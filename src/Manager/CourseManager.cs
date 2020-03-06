@@ -142,6 +142,19 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course);
         }
 
+        public IQueryable<Feedback> GetFeedbacks(Course course)
+        {
+            ThrowIfDisposed();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+
+            var store = GetCourseFeedbackStore();
+            return store.GetFeedbacks(course);
+        }
+
         public async Task RemoveAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
