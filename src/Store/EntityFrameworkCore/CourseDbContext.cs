@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using KnowledgeShare.Store.Core;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
-    public class CourseDbContext : DbContext
+    public class CourseDbContext : IdentityUserContext<CourseUser>
     {
         public CourseDbContext() { }
 
@@ -14,6 +15,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
             builder.Entity<Course>(entity =>
             {
                 entity.HasKey(course => course.Id);
@@ -36,11 +38,6 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
                     .HasConversion(
                         value => JsonConvert.SerializeObject(value),
                         value => JsonConvert.DeserializeObject<List<Session>>(value));
-            });
-
-            builder.Entity<CourseUser>(entity =>
-            {
-                entity.HasKey(user => user.Id);
             });
 
             builder.Entity<Registrant>(entity =>
