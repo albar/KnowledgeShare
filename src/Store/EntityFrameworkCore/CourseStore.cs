@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
-    public class CourseStore : ICourseStore
+    public class CourseStore : ICourseStore, ICourseRegistrantStore
     {
         private readonly CourseDbContext _database;
 
@@ -18,6 +18,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
         }
 
         protected DbSet<Course> Courses => _database.Set<Course>();
+        protected DbSet<Registrant> Registrants => _database.Set<Registrant>();
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
@@ -44,6 +45,28 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             await SaveChangeAsync(token);
         }
 
+        public Task RegisterUserToAsync(Course course, CourseUser user, CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            course.Registrants.Add(CreateRegistrant(course, user));
+            return Task.CompletedTask;
+        }
+
+        public IQueryable<Registrant> GetRegistrants(Course course)
+        {
+            return Registrants.Where(registrant => registrant.Course.Id == course.Id);
+        }
+
         public async Task RemoveAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
@@ -55,6 +78,15 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
         private async Task SaveChangeAsync(CancellationToken token = default)
         {
             await _database.SaveChangesAsync(token);
+        }
+
+        private Registrant CreateRegistrant(Course course, CourseUser user)
+        {
+            return new Registrant
+            {
+                Course = course,
+                User = user,
+            };
         }
 
         #region Dispose
