@@ -51,7 +51,7 @@ namespace KnowledgeShare.Manager.Test
         {
             return new CourseUser
             {
-                Username = "fake",
+                UserName = "fake",
                 Email = "fake@mail.com",
                 Role = role,
             };

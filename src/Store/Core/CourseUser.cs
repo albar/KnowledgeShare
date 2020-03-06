@@ -1,12 +1,9 @@
-using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace KnowledgeShare.Store.Core
 {
-    public class CourseUser
+    public class CourseUser : IdentityUser
     {
-        public string Id { get; } = Guid.NewGuid().ToString();
-        public string Username { get; set; }
-        public string Email { get; set; }
         public CourseUserRole Role { get; set; }
     }
 }
