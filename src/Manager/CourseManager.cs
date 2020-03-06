@@ -104,6 +104,19 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course);
         }
 
+        public IQueryable<CourseUser> GetReigstrants(Course course)
+        {
+            ThrowIfDisposed();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+
+            var store = GetCourseRegistrantStore();
+            return store.GetRegistrants(course);
+        }
+
         public async Task AddFeedbackToAsync(
             Course course,
             CourseUser user,

@@ -490,6 +490,37 @@ namespace KnowledgeShare.Manager.Test
         }
 
         [Fact]
+        public void Can_Get_Queryable_Registrants()
+        {
+            var fakeStore = new Mock<ICourseRegistrantStore>();
+            fakeStore.Setup(store => store.GetRegistrants(It.IsAny<Course>()))
+                .Returns(It.IsAny<IQueryable<CourseUser>>());
+
+            CourseManager manager = new CourseManager(
+                fakeStore.As<ICourseStore>().Object,
+                new ICourseValidator[] { });
+
+            IQueryable<CourseUser> _ = manager.GetReigstrants(new Course());
+
+            fakeStore.Verify(
+                store => store.GetRegistrants(It.IsAny<Course>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public void Throw_When_Get_Queryable_Registrants_With_Null()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            Assert.Throws<ArgumentNullException>(() =>
+                manager.GetReigstrants(null));
+        }
+
+        [Fact]
         public async Task Can_Add_Feedback_To_A_Course()
         {
             var fakeStore = new Mock<ICourseFeedbackStore>();
