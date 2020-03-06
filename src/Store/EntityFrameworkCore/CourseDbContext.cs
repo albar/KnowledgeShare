@@ -19,25 +19,24 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             builder.Entity<Course>(entity =>
             {
                 entity.HasKey(course => course.Id);
+
                 entity.HasOne(course => course.Author);
                 entity.HasOne(course => course.Speaker);
                 entity.HasMany(course => course.Registrants);
                 entity.HasMany(course => course.Feedbacks);
 
-                entity.Property(course => course.Visibility)
-                    .HasConversion(
-                        value => value.ToString(),
-                        value => (CourseVisibility)Enum.Parse(
-                            typeof(CourseVisibility), value));
+                entity.Property(course => course.Visibility).HasConversion(
+                    value => value.ToString(),
+                    value => (CourseVisibility)Enum.Parse(
+                        typeof(CourseVisibility), value));
 
                 entity.Ignore(course => course.Location);
                 entity.Property<string>("_location");
                 entity.Property<string>("_locationType");
 
-                entity.Property(course => course.Sessions)
-                    .HasConversion(
-                        value => JsonSerializer.Serialize(value, null),
-                        value => JsonSerializer.Deserialize<List<Session>>(value, null));
+                entity.Property(course => course.Sessions).HasConversion(
+                    value => JsonSerializer.Serialize(value, null),
+                    value => JsonSerializer.Deserialize<List<Session>>(value, null));
             });
 
             builder.Entity<Registrant>(entity =>

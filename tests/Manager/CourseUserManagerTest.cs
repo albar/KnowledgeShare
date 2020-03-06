@@ -16,7 +16,7 @@ namespace KnowledgeShare.Manager.Test
         {
             var fakeCourseUserStore = new Mock<ICourseUserRoleStore>();
             fakeCourseUserStore.Setup(store => store.SetCourseUserRoleAsync(
-                    It.IsAny<Store.Core.CourseUser>(),
+                    It.IsAny<CourseUser>(),
                     It.IsAny<CourseUserRole>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
@@ -28,7 +28,7 @@ namespace KnowledgeShare.Manager.Test
             await manager.SetCourseUserRoleAsync(CreateUser(), CourseUserRole.Manager);
 
             fakeCourseUserStore.Verify(store => store.SetCourseUserRoleAsync(
-                    It.IsAny<Store.Core.CourseUser>(),
+                    It.IsAny<CourseUser>(),
                     It.IsAny<CourseUserRole>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
