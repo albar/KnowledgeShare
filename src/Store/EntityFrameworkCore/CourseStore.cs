@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
-    public class CourseStore : ICourseStore, ICourseRegistrantStore
+    public class CourseStore : ICourseStore, ICourseRegistrantStore, ICourseFeedbackStore
     {
         private readonly CourseDbContext _database;
 
@@ -19,6 +19,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 
         protected DbSet<Course> Courses => _database.Set<Course>();
         protected DbSet<Registrant> Registrants => _database.Set<Registrant>();
+        protected DbSet<Feedback> Feedbacks => _database.Set<Feedback>();
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
@@ -67,6 +68,33 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             return Registrants.Where(registrant => registrant.Course.Id == course.Id);
         }
 
+        public Task AddFeedbackToAsync(
+            Course course,
+            CourseUser user,
+            FeedbackRate rate,
+            string message,
+            CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            course.Feedbacks.Add(CreateFeedback(course, user, rate, message));
+            return Task.CompletedTask;
+        }
+
+        public IQueryable<Feedback> GetFeedbacks(Course course)
+        {
+            return Feedbacks.Where(feedback => feedback.Course.Id == course.Id);
+        }
+
         public async Task RemoveAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
@@ -86,6 +114,17 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             {
                 Course = course,
                 User = user,
+            };
+        }
+
+        private Feedback CreateFeedback(Course course, CourseUser user, FeedbackRate rate, string message)
+        {
+            return new Feedback
+            {
+                Course = course,
+                User = user,
+                Rate = rate,
+                Message = message,
             };
         }
 
