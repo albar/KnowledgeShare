@@ -12,6 +12,6 @@ namespace KnowledgeShare.Store.Abstractions
             CourseUser user,
             CancellationToken token = default);
 
-        IQueryable<CourseUser> GetRegistrants(Course course);
+        IQueryable<Registrant> GetRegistrants(Course course);
     }
 }

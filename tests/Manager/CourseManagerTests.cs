@@ -494,13 +494,13 @@ namespace KnowledgeShare.Manager.Test
         {
             var fakeStore = new Mock<ICourseRegistrantStore>();
             fakeStore.Setup(store => store.GetRegistrants(It.IsAny<Course>()))
-                .Returns(It.IsAny<IQueryable<CourseUser>>());
+                .Returns(It.IsAny<IQueryable<Registrant>>());
 
             CourseManager manager = new CourseManager(
                 fakeStore.As<ICourseStore>().Object,
                 new ICourseValidator[] { });
 
-            IQueryable<CourseUser> _ = manager.GetReigstrants(new Course());
+            IQueryable<Registrant> _ = manager.GetReigstrants(new Course());
 
             fakeStore.Verify(
                 store => store.GetRegistrants(It.IsAny<Course>()),

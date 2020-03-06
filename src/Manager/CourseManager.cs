@@ -104,7 +104,7 @@ namespace KnowledgeShare.Manager
             await UpdateCourseAsync(course);
         }
 
-        public IQueryable<CourseUser> GetReigstrants(Course course)
+        public IQueryable<Registrant> GetReigstrants(Course course)
         {
             ThrowIfDisposed();
 
