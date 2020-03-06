@@ -8,6 +8,8 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 {
     public class CourseDbContext : DbContext
     {
+        public CourseDbContext() { }
+
         public CourseDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
