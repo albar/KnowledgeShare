@@ -21,23 +21,33 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
+            token.ThrowIfCancellationRequested();
+
             _database.Add(course);
             await SaveChangeAsync(token);
         }
 
         public ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default)
         {
-            return new ValueTask<Course>(Courses.Where(course => course.Id == courseId).SingleOrDefaultAsync(token));
+            token.ThrowIfCancellationRequested();
+
+            return new ValueTask<Course>(
+                Courses.Where(course => course.Id == courseId)
+                    .SingleOrDefaultAsync(token));
         }
 
         public async Task UpdateAsync(Course course, CancellationToken token = default)
         {
+            token.ThrowIfCancellationRequested();
+
             _database.Update(course);
             await SaveChangeAsync(token);
         }
 
         public async Task RemoveAsync(Course course, CancellationToken token = default)
         {
+            token.ThrowIfCancellationRequested();
+
             _database.Remove(course);
             await SaveChangeAsync(token);
         }
