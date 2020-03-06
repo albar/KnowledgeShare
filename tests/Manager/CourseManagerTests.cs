@@ -72,27 +72,27 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns<CourseManager, Course, CancellationToken>((_, course, __) =>
                 {
-                    ValidationErrorsBag bag = new ValidationErrorsBag();
+                    IList<ValidationError> errors = new List<ValidationError>();
                     if (course.Author == null || course.Author.Role == CourseUserRole.User)
                     {
-                        bag.Add("Author");
+                        errors.Add(ValidationError.Create("Author"));
                     }
                     if (string.IsNullOrWhiteSpace(course.Title))
                     {
-                        bag.Add("Title");
+                        errors.Add(ValidationError.Create("Title"));
                     }
                     if (course.Location == null)
                     {
-                        bag.Add("Location");
+                        errors.Add(ValidationError.Create("Location"));
                     }
                     if (course.Sessions == null || course.Sessions.Count < 1)
                     {
-                        bag.Add("Session");
+                        errors.Add(ValidationError.Create("Session"));
                     }
 
-                    if (bag.Count > 0)
+                    if (errors.Count > 0)
                     {
-                        return Task.FromResult(ValidationResult.FromErrorsBag(bag));
+                        return Task.FromResult(ValidationResult.FromErrorsBag(errors));
                     }
 
                     return Task.FromResult(ValidationResult.Success);
@@ -122,7 +122,7 @@ namespace KnowledgeShare.Manager.Test
                     Visibility = CourseVisibility.Public,
                 }));
 
-            Assert.Equal(errorsCount, exception.ErrorsBag.Count);
+            Assert.Equal(errorsCount, exception.Errors.Length);
 
             fakeStore.Verify(store => store.CreateAsync(
                     It.IsAny<Course>(),
@@ -245,27 +245,27 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns<CourseManager, Course, CancellationToken>((_, course, __) =>
                 {
-                    ValidationErrorsBag bag = new ValidationErrorsBag();
+                    IList<ValidationError> errors = new List<ValidationError>();
                     if (course.Author == null || course.Author.Role == CourseUserRole.User)
                     {
-                        bag.Add("Author");
+                        errors.Add(ValidationError.Create("Author"));
                     }
                     if (string.IsNullOrWhiteSpace(course.Title))
                     {
-                        bag.Add("Title");
+                        errors.Add(ValidationError.Create("Title"));
                     }
                     if (course.Location == null)
                     {
-                        bag.Add("Location");
+                        errors.Add(ValidationError.Create("Location"));
                     }
                     if (course.Sessions == null || course.Sessions.Count < 1)
                     {
-                        bag.Add("Session");
+                        errors.Add(ValidationError.Create("Session"));
                     }
 
-                    if (bag.Count > 0)
+                    if (errors.Count > 0)
                     {
-                        return Task.FromResult(ValidationResult.FromErrorsBag(bag));
+                        return Task.FromResult(ValidationResult.FromErrorsBag(errors));
                     }
 
                     return Task.FromResult(ValidationResult.Success);
@@ -295,7 +295,7 @@ namespace KnowledgeShare.Manager.Test
                     Visibility = CourseVisibility.Public,
                 }));
 
-            Assert.Equal(errorsCount, exception.ErrorsBag.Count);
+            Assert.Equal(errorsCount, exception.Errors.Length);
 
             fakeStore.Verify(store => store.UpdateAsync(
                     It.IsAny<Course>(),

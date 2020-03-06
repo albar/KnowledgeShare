@@ -1,14 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KnowledgeShare.Manager.Validation
 {
     public class ValidationException : Exception
     {
-        public ValidationException(ValidationErrorsBag errorsBag)
+        public ValidationException(IEnumerable<ValidationError> errors)
         {
-            ErrorsBag = errorsBag;
+            Errors = errors.ToArray();
         }
 
-        public ValidationErrorsBag ErrorsBag { get; }
+        public ValidationError[] Errors { get; }
     }
 }

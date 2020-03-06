@@ -37,7 +37,7 @@ namespace KnowledgeShare.Manager
             var result = await ValidateCourseAsync(course, token);
             if (!result.Succeeded)
             {
-                throw new ValidationException(result.ErrorsBag);
+                throw new ValidationException(result.Errors);
             }
 
             await _store.CreateAsync(course, token);
@@ -156,7 +156,7 @@ namespace KnowledgeShare.Manager
             var result = await ValidateCourseAsync(course, token);
             if (!result.Succeeded)
             {
-                throw new ValidationException(result.ErrorsBag);
+                throw new ValidationException(result.Errors);
             }
 
             await _store.UpdateAsync(course, token);
@@ -165,7 +165,7 @@ namespace KnowledgeShare.Manager
         private async Task<ValidationResult> ValidateCourseAsync(Course course, CancellationToken token)
         {
             var succeeded = true;
-            var errorsBag = new ValidationErrorsBag();
+            var errors = new List<ValidationError>();
 
             foreach (var validator in _validators)
             {
@@ -173,11 +173,11 @@ namespace KnowledgeShare.Manager
                 if (!result.Succeeded)
                 {
                     succeeded = false;
-                    errorsBag.Append(result.ErrorsBag);
+                    errors.AddRange(result.Errors);
                 }
             }
 
-            return new ValidationResult(succeeded, errorsBag);
+            return new ValidationResult(succeeded, errors);
         }
 
         private ICourseRegistrantStore GetCourseRegistrantStore()
