@@ -16,7 +16,7 @@ namespace KnowledgeShare.Server
 {
     public class Startup
     {
-        private static readonly string AllowAllCorsDevOnly = "AllowAllCorsDevOnly";
+        private static readonly string DevelopmentOnlyCors = "DevelopmentOnlyCors";
 
         public Startup(IConfiguration configuration)
         {
@@ -37,7 +37,7 @@ namespace KnowledgeShare.Server
 
             services.AddCors(cors =>
             {
-                cors.AddPolicy(AllowAllCorsDevOnly, builder =>
+                cors.AddPolicy(DevelopmentOnlyCors, builder =>
                 {
                     builder.AllowAnyHeader();
                     builder.AllowAnyMethod();
@@ -52,7 +52,7 @@ namespace KnowledgeShare.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors(AllowAllCorsDevOnly);
+                app.UseCors(DevelopmentOnlyCors);
             }
 
             app.UseStaticFiles();
