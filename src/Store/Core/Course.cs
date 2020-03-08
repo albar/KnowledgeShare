@@ -22,6 +22,9 @@ namespace KnowledgeShare.Store.Core
         public List<Registrant> Registrants { get; } = new List<Registrant>();
         public List<Feedback> Feedbacks { get; } = new List<Feedback>();
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
         private string _location = null;
         private string _locationType = typeof(ILocation).AssemblyQualifiedName;
         private ILocation _locationCache = null;

@@ -7,5 +7,6 @@ namespace KnowledgeShare.Store.Core
         public string Id { get; } = Guid.NewGuid().ToString();
         public CourseUser User { get; set; }
         public Course Course { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

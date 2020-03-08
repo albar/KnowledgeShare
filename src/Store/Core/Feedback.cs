@@ -9,5 +9,6 @@ namespace KnowledgeShare.Store.Core
         public CourseUser User { get; set; }
         public FeedbackRate Rate { get; set; }
         public string Message { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
