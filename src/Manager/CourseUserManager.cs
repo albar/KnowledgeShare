@@ -10,24 +10,22 @@ using Microsoft.Extensions.Options;
 
 namespace KnowledgeShare.Manager
 {
-    public class CourseUserManager<TUser> : UserManager<TUser> where TUser : CourseUser
+    public class CourseUserManager : UserManager<CourseUser>
     {
         public CourseUserManager(
-            IUserStore<TUser> store,
+            IUserStore<CourseUser> store,
             IOptions<IdentityOptions> optionsAccessor,
-            IPasswordHasher<TUser> passwordHasher,
-            IEnumerable<IUserValidator<TUser>> userValidators,
-            IEnumerable<IPasswordValidator<TUser>> passwordValidators,
-            ILookupNormalizer keyNormalizer,
-            IdentityErrorDescriber errors,
-            IServiceProvider services,
-            ILogger<UserManager<TUser>> logger) :
+            IPasswordHasher<CourseUser> passwordHasher,
+            IEnumerable<IUserValidator<CourseUser>> userValidators,
+            IEnumerable<IPasswordValidator<CourseUser>> passwordValidators,
+            ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors,
+            IServiceProvider services, ILogger<UserManager<CourseUser>> logger) :
             base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
 
         public async Task SetCourseUserRoleAsync(
-            TUser user,
+            CourseUser user,
             CourseUserRole role,
             CancellationToken token = default)
         {

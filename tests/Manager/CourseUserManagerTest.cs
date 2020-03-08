@@ -21,7 +21,7 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            CourseUserManager<CourseUser> manager = new CourseUserManager<CourseUser>(
+            CourseUserManager manager = new CourseUserManager(
                 fakeCourseUserStore.As<IUserStore<CourseUser>>().Object,
                 null, null, null, null, null, null, null, null);
 
@@ -39,7 +39,7 @@ namespace KnowledgeShare.Manager.Test
         {
             var fakeUserStore = new Mock<IUserStore<CourseUser>>();
 
-            CourseUserManager<CourseUser> manager = new CourseUserManager<CourseUser>(
+            CourseUserManager manager = new CourseUserManager(
                 fakeUserStore.Object,
                 null, null, null, null, null, null, null, null);
 
