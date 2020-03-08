@@ -3,9 +3,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Manager\KnowledgeShare.Manager.csproj" />
     <ProjectReference Include="..\..\libs\Bunnypro.SpaService.VueCli\src\Bunnypro.SpaService.VueCli.csproj" />
+    <ProjectReference Include="..\Store\EntityFrameworkCore\KnowledgeShare.Store.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
   </ItemGroup>
 

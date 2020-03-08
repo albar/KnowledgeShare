@@ -1,21 +1,44 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
+using IdentityServer4.EntityFramework.Entities;
+using IdentityServer4.EntityFramework.Extensions;
+using IdentityServer4.EntityFramework.Interfaces;
+using IdentityServer4.EntityFramework.Options;
 using KnowledgeShare.Store.Core;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
-    public class CourseDbContext : IdentityUserContext<CourseUser>
+    public class CourseDbContext : IdentityUserContext<CourseUser>, IPersistedGrantDbContext
     {
+        private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+
         public CourseDbContext() { }
 
-        public CourseDbContext(DbContextOptions options) : base(options) { }
+        public CourseDbContext(
+            DbContextOptions options,
+            IOptions<OperationalStoreOptions> operationalStoreOptions) :
+            base(options)
+        {
+            _operationalStoreOptions = operationalStoreOptions;
+        }
+
+        public DbSet<PersistedGrant> PersistedGrants { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value);
+            CounfigureCourseContext(builder);
+        }
+
+        private void CounfigureCourseContext(ModelBuilder builder)
+        {
             builder.Entity<Course>(entity =>
             {
                 entity.HasKey(course => course.Id);
@@ -48,6 +71,11 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             {
                 entity.HasKey(feedback => feedback.Id);
             });
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
