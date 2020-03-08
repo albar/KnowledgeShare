@@ -9,9 +9,9 @@ namespace KnowledgeShare.Manager.Validation
             Code = code;
         }
 
-        public string Key { get; private set; }
-        public string Description { get; private set; }
-        public int Code { get; private set; }
+        public string Key { get; }
+        public string Description { get; }
+        public int Code { get; }
 
         public static ValidationError Create(string key, string description)
         {
