@@ -93,7 +93,7 @@ namespace KnowledgeShare.Manager.Test
 
                     if (errors.Count > 0)
                     {
-                        return Task.FromResult(ValidationResult.FromErrorsBag(errors));
+                        return Task.FromResult(ValidationResult.FromErrors(errors));
                     }
 
                     return Task.FromResult(ValidationResult.Success);
@@ -266,7 +266,7 @@ namespace KnowledgeShare.Manager.Test
 
                     if (errors.Count > 0)
                     {
-                        return Task.FromResult(ValidationResult.FromErrorsBag(errors));
+                        return Task.FromResult(ValidationResult.FromErrors(errors));
                     }
 
                     return Task.FromResult(ValidationResult.Success);

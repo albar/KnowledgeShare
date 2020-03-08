@@ -18,7 +18,7 @@ namespace KnowledgeShare.Manager.Validation
 
         public static ValidationResult Failed { get; } = new ValidationResult(false, new ValidationError[] { });
 
-        public static ValidationResult FromErrorsBag(IEnumerable<ValidationError> errors)
+        public static ValidationResult FromErrors(IEnumerable<ValidationError> errors)
         {
             return new ValidationResult(errors.Count() > 0 ? false : true, errors);
         }
