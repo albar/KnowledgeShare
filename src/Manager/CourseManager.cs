@@ -7,6 +7,7 @@ using KnowledgeShare.Store.Core;
 using KnowledgeShare.Manager.Validation;
 using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Store.Abstractions;
+using KnowledgeShare.Manager.Exceptions;
 
 namespace KnowledgeShare.Manager
 {
@@ -213,8 +214,7 @@ namespace KnowledgeShare.Manager
                 return store;
             }
 
-            throw new NotSupportedException(
-                $"Store is not supported to do this action. {nameof(ICourseRegistrantStore)} is not implemented");
+            throw new NotSupportedStoreException(_store.GetType().Name, nameof(ICourseRegistrantStore));
         }
 
         private ICourseFeedbackStore GetCourseFeedbackStore()
@@ -224,8 +224,7 @@ namespace KnowledgeShare.Manager
                 return store;
             }
 
-            throw new NotSupportedException(
-                $"Store is not supported to do this action. {nameof(ICourseFeedbackStore)} is not implemented");
+            throw new NotSupportedStoreException(_store.GetType().Name, nameof(ICourseFeedbackStore));
         }
 
         private IQueryableStore<Course> GetQueryableStore()
@@ -235,8 +234,7 @@ namespace KnowledgeShare.Manager
                 return store;
             }
 
-            throw new NotSupportedException(
-                $"Store is not supported to do this action. {nameof(IQueryableStore<Course>)} is not implemented");
+            throw new NotSupportedStoreException(_store.GetType().Name, nameof(IQueryableStore<Course>));
         }
 
         protected void ThrowIfDisposed()

@@ -9,6 +9,7 @@ using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Store.Abstractions;
 using Moq;
 using Xunit;
+using KnowledgeShare.Manager.Exceptions;
 
 namespace KnowledgeShare.Manager.Test
 {
@@ -520,7 +521,33 @@ namespace KnowledgeShare.Manager.Test
                 manager.GetReigstrants(null));
         }
 
+        [Fact]
+        public async Task Throw_When_Trying_To_Add_Registrant_But_Store_Not_Implement_Related_Interface()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
 
+            await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
+                await manager.RegisterUserToAsync(
+                    new Course(),
+                    CreateUser()));
+        }
+
+        [Fact]
+        public async Task Throw_When_Trying_To_Add_Registrants_But_Store_Not_Implement_Related_Interface()
+        {
+            var fakeStore = new Mock<ICourseStore>();
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { });
+
+            await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
+                await manager.RegisterUsersToAsync(
+                    new Course(),
+                    new CourseUser[] { CreateUser() }));
+        }
 
         [Fact]
         public void Can_Get_Queryable_Feedback()
@@ -615,7 +642,7 @@ namespace KnowledgeShare.Manager.Test
                 fakeStore.Object,
                 new ICourseValidator[] { });
 
-            await Assert.ThrowsAsync<NotSupportedException>(async () =>
+            await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
                 await manager.AddFeedbackToAsync(
                     new Course(),
                     CreateUser(),
