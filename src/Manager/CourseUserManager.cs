@@ -7,6 +7,7 @@ using KnowledgeShare.Store.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using KnowledgeShare.Manager.Exceptions;
 
 namespace KnowledgeShare.Manager
 {
@@ -48,8 +49,7 @@ namespace KnowledgeShare.Manager
                 return store;
             }
 
-            throw new NotSupportedException(
-                $"Store is not suppported to do this action. {nameof(ICourseUserRoleStore)} is not implemented");
+            throw new NotSupportedStoreException(Store.GetType().Name, nameof(ICourseUserRoleStore));
         }
     }
 }

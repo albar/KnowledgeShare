@@ -6,6 +6,7 @@ using KnowledgeShare.Store.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using Xunit;
+using KnowledgeShare.Manager.Exceptions;
 
 namespace KnowledgeShare.Manager.Test
 {
@@ -45,6 +46,20 @@ namespace KnowledgeShare.Manager.Test
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.SetCourseUserRoleAsync(null, CourseUserRole.Manager));
+        }
+
+        [Fact]
+        public async Task Throw_When_Trying_To_Set_Role_But_Store_Not_Implement_Related_Interface()
+        {
+            var fakeStore = new Mock<IUserStore<CourseUser>>();
+            CourseUserManager manager = new CourseUserManager(
+                fakeStore.Object,
+                null, null, null, null, null, null, null, null);
+
+            await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
+                await manager.SetCourseUserRoleAsync(
+                    CreateUser(),
+                    CourseUserRole.Manager));
         }
 
         private static CourseUser CreateUser(CourseUserRole role = CourseUserRole.User)
