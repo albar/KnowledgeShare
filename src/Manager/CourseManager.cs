@@ -13,16 +13,16 @@ namespace KnowledgeShare.Manager
     public class CourseManager : IDisposable
     {
         private readonly ICourseStore _store;
-        private readonly IEnumerable<ICourseValidator> _validators;
         private bool _disposed;
 
         public CourseManager(ICourseStore store, IEnumerable<ICourseValidator> validators)
         {
             _store = store;
-            _validators = validators;
+            Validators = validators.ToList();
         }
 
         public IQueryable<Course> Courses => GetQueryableStore().Items;
+        private List<ICourseValidator> Validators { get; }
 
         public async Task CreateAsync(Course course, CancellationToken token = default)
         {
@@ -193,7 +193,7 @@ namespace KnowledgeShare.Manager
             var succeeded = true;
             var errors = new List<ValidationError>();
 
-            foreach (var validator in _validators)
+            foreach (var validator in Validators)
             {
                 var result = await validator.ValidateAsync(this, course, token);
                 if (!result.Succeeded)
