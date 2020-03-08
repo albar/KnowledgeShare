@@ -11,28 +11,16 @@ namespace KnowledgeShare.Manager.Validation
             Errors = errors;
         }
 
-        public bool Succeeded { get; private set; }
-        public IEnumerable<ValidationError> Errors { get; private set; }
+        public bool Succeeded { get; }
+        public IEnumerable<ValidationError> Errors { get; }
 
-        public static ValidationResult Success { get; } = new ValidationResult
-        {
-            Succeeded = true,
-            Errors = new ValidationError[] { },
-        };
+        public static ValidationResult Success { get; } = new ValidationResult(true, new ValidationError[] { });
 
-        public static ValidationResult Failed { get; } = new ValidationResult
-        {
-            Succeeded = false,
-            Errors = new ValidationError[] { },
-        };
+        public static ValidationResult Failed { get; } = new ValidationResult(false, new ValidationError[] { });
 
         public static ValidationResult FromErrorsBag(IEnumerable<ValidationError> errors)
         {
-            return new ValidationResult
-            {
-                Succeeded = errors.Count() > 0 ? false : true,
-                Errors = errors,
-            };
+            return new ValidationResult(errors.Count() > 0 ? false : true, errors);
         }
     }
 }
