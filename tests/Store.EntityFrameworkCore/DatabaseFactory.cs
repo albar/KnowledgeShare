@@ -1,6 +1,8 @@
-using System;
 using System.Data.Common;
+using IdentityServer4.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Moq;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore.Test
 {
@@ -15,8 +17,10 @@ namespace KnowledgeShare.Store.EntityFrameworkCore.Test
 
         public CourseDbContext Create()
         {
-            var options = CreateOptions();
-            var context = new CourseDbContext(options);
+            var dbContextOptions = CreateOptions();
+            var storeOption = new Mock<IOptions<OperationalStoreOptions>>();
+            storeOption.SetupGet(opt => opt.Value).Returns(new OperationalStoreOptions());
+            var context = new CourseDbContext(dbContextOptions, storeOption.Object);
             context.Database.EnsureCreated();
             return context;
         }

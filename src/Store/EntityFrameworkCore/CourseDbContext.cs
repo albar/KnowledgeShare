@@ -10,6 +10,7 @@ using KnowledgeShare.Store.Core;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
@@ -27,8 +28,8 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             _operationalStoreOptions = operationalStoreOptions;
         }
 
-        public DbSet<PersistedGrant> PersistedGrants { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DbSet<PersistedGrant> PersistedGrants { get; set; }
+        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -75,7 +76,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
 
         public Task<int> SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return base.SaveChangesAsync();
         }
     }
 }
