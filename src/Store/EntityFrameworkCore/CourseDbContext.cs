@@ -10,7 +10,6 @@ using KnowledgeShare.Store.Core;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
