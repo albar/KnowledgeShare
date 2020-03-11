@@ -1,5 +1,8 @@
 using Bunnypro.SpaService.VueCli;
+using KnowledgeShare.Manager;
+using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Store.Core;
+using KnowledgeShare.Store.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,6 +57,9 @@ namespace KnowledgeShare.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            services.AddScoped<ICourseStore, CourseStore<CourseContext>>();
+            services.AddScoped<CourseManager>();
 
             services.AddSpaStaticFiles(config =>
             {

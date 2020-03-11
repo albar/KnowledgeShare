@@ -1,12 +1,12 @@
 import { authPrefix } from '../authorization/constants';
 import Auth from '../authorization/Auth';
-import Home from '../views/Home.vue';
+import Courses from '../views/Courses.vue';
 
 export default [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    name: 'home',
+    component: Courses,
   },
   {
     path: `${authPrefix}/:action`,

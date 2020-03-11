@@ -8,14 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
-    public class CourseStore : ICourseStore, ICourseRegistrantStore, ICourseFeedbackStore
+    public class CourseStore<TContext> :
+        ICourseStore,
+        ICourseRegistrantStore,
+        ICourseFeedbackStore,
+        IQueryableStore<Course>
+        where TContext : CourseDbContext
     {
-        private readonly CourseDbContext _database;
+        private readonly TContext _database;
 
-        public CourseStore(CourseDbContext database)
+        public CourseStore(TContext database)
         {
             _database = database;
         }
+
+        public IQueryable<Course> Items => Courses;
 
         protected DbSet<Course> Courses => _database.Set<Course>();
         protected DbSet<Registrant> Registrants => _database.Set<Registrant>();
