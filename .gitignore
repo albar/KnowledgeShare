@@ -39,3 +39,4 @@ node_modules
 example
 
 src/Server/Migrations
+**/*.rsa
