@@ -58,6 +58,12 @@ namespace KnowledgeShare.Server.Areas.Identity.Pages.Account
 
             returnUrl ??= Url.Content("~/");
 
+            if (_signInManager.IsSignedIn(User))
+            {
+                LocalRedirect(returnUrl);
+                return;
+            }
+
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 

@@ -27,6 +27,7 @@ namespace KnowledgeShare.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddRazorPages();
 
             services.AddDbContext<CourseContext>(options =>
             {
@@ -45,9 +46,7 @@ namespace KnowledgeShare.Server
 
             services.AddHttpContextAccessor();
 
-            services.AddIdentityCore<CourseUser>()
-                .AddSignInManager<SignInManager<CourseUser>>()
-                .AddDefaultTokenProviders()
+            services.AddDefaultIdentity<CourseUser>()
                 .AddEntityFrameworkStores<CourseContext>();
 
             services.AddIdentityServer()
@@ -65,9 +64,9 @@ namespace KnowledgeShare.Server
             {
                 cors.AddPolicy(DevelopmentOnlyCors, builder =>
                 {
-                    builder.AllowAnyHeader();
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyOrigin();
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
         }
@@ -80,6 +79,8 @@ namespace KnowledgeShare.Server
                 app.UseDeveloperExceptionPage();
                 app.UseCors(DevelopmentOnlyCors);
             }
+
+            // app.UseHttpsRedirection();
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
@@ -94,6 +95,7 @@ namespace KnowledgeShare.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
             });
 
             app.UseSpa(spa =>
