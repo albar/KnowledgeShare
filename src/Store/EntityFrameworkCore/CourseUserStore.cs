@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace KnowledgeShare.Store.EntityFrameworkCore
 {
-    public class CourseUserStore :
-        UserOnlyStore<CourseUser, CourseDbContext>,
+    public class CourseUserStore<TContext> :
+        UserOnlyStore<CourseUser, TContext>,
         ICourseUserRoleStore
+        where TContext : CourseDbContext
     {
         public CourseUserStore(
-            CourseDbContext context,
+            TContext context,
             IdentityErrorDescriber describer = null)
             : base(context, describer)
         {

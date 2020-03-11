@@ -49,6 +49,14 @@ namespace KnowledgeShare.Server
 
             services.AddHttpContextAccessor();
 
+            services.AddScoped<IUserStore<CourseUser>, CourseUserStore<CourseContext>>();
+            services.AddScoped<ICourseStore, CourseStore<CourseContext>>();
+
+            services.AddScoped<CourseUserManager>();
+            services.AddScoped<UserManager<CourseUser>>(service =>
+                service.GetRequiredService<CourseUserManager>());
+            services.AddScoped<CourseManager>();
+
             services.AddDefaultIdentity<CourseUser>()
                 .AddEntityFrameworkStores<CourseContext>();
 
@@ -57,9 +65,6 @@ namespace KnowledgeShare.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
-
-            services.AddScoped<ICourseStore, CourseStore<CourseContext>>();
-            services.AddScoped<CourseManager>();
 
             services.AddSpaStaticFiles(config =>
             {
