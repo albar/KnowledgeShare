@@ -16,8 +16,10 @@ export default {
     courses: []
   }),
   async created() {
-    const response = await this.$client.request(ListCourses);
-    this.courses = await response.json();
+    const response = await this.$client.request({ name: ListCourses });
+    if (response.ok) {
+      this.courses = await response.json();
+    }
   }
 };
 </script>

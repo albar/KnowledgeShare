@@ -17,5 +17,10 @@ export default [
     path: ApplicationPaths.CourseCreate,
     name: 'course-create',
     component: () => import('../views/course/Create.vue'),
+  },
+  {
+    path: ApplicationPaths.CourseDetail,
+    name: 'course-detail',
+    component: () => import('../views/course/Detail.vue'),
   }
 ];

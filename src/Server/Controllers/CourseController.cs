@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 using KnowledgeShare.Manager;
 using KnowledgeShare.Store.Core;
-using KnowledgeShare.Store.Core.Converters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,18 +33,23 @@ namespace KnowledgeShare.Server.Controllers
         }
 
         [HttpGet("/api/course")]
+        [Authorize]
         [Produces("application/json")]
         public async Task<IActionResult> ListCourses()
         {
-            var courses = await _manager.Courses
+            var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            var courses = await _manager.GetCoursesVisibleTo(user)
                 .Include(course => course.Author)
                 .Include(course => course.Speaker)
+                .OrderByDescending(course => course.UpdatedAt)
                 .ToListAsync();
 
             return new ObjectResult(courses);
         }
 
         [HttpGet("/api/course/visibility")]
+        [Produces("application/json")]
         public IActionResult ListCourseVisibilities()
         {
             var visibilities = Enum.GetValues(typeof(CourseVisibility))
@@ -63,7 +66,8 @@ namespace KnowledgeShare.Server.Controllers
 
         [HttpPost("/api/course")]
         [Authorize]
-        public async Task<IActionResult> CreateAsync([FromBody] CourseModel model)
+        [Produces("application/json")]
+        public async Task<IActionResult> CreateAsync([FromBody] CreateCourseModel model)
         {
             var authorId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var author = await _userManager.FindByIdAsync(authorId);
@@ -83,7 +87,21 @@ namespace KnowledgeShare.Server.Controllers
             return new CreatedResult("/api/course", course);
         }
 
-        public class CourseModel
+        [HttpGet("/api/course/{id}")]
+        [Authorize]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetCourse(string id)
+        {
+            var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            var courses = await _manager.GetCoursesVisibleTo(user)
+                .Where(course => course.Id == id)
+                .FirstAsync();
+
+            return new ObjectResult(courses);
+        }
+
+        public class CreateCourseModel
         {
             public string Title { get; set; }
             public string Description { get; set; }

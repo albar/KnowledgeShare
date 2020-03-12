@@ -6,14 +6,14 @@ export class HttpClient {
     this.auth = authService;
   }
 
-  async request(name, data) {
-    const requestInfo = await this.buildRequestInfo(name, data);
-    return await fetch(requestInfo.url, requestInfo.info);
+  async request(info) {
+    const request = await this.buildRequest(info);
+    return await fetch(request.url, request.info);
   }
 
-  async buildRequestInfo(name, data) {
-    const requestInfo = requests[name];
-    console.log(requestInfo, this.base);
+  async buildRequest({ name, args, data }) {
+    const { resolveUrl, method } = requests[name];
+    let requestUrl = resolveUrl(args);
 
     const token = await this.auth.getAccessToken();
 
@@ -22,31 +22,27 @@ export class HttpClient {
       'Authorization': `Bearer ${token}`
     };
 
-    if (['get', 'option'].includes(requestInfo.method)) {
-      const url = new URL(requestInfo.url, this.base);
+    if (['get', 'option'].includes(method)) {
+      const url = new URL(requestUrl, this.base);
       url.search = new URLSearchParams(data).toString();
-      console.log(url.toString());
-      const info = {
-        method: requestInfo.method,
-        headers
-      };
       return {
         url,
-        info
+        info: {
+          method,
+          headers
+        }
       };
     }
 
     headers['Content-Type'] = 'application/json';
 
-    const info = {
-      method: requestInfo.method,
-      body: JSON.stringify(data),
-      headers
-    };
-
     return {
-      url: requestInfo.url,
-      info
+      url: requestUrl,
+      info: {
+        method,
+        body: JSON.stringify(data),
+        headers
+      }
     };
   }
 }

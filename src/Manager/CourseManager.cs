@@ -52,6 +52,21 @@ namespace KnowledgeShare.Manager
             return await _store.FindByIdAsync(courseId, token);
         }
 
+        public IQueryable<Course> GetCoursesVisibleTo(CourseUser user)
+        {
+            ThrowIfDisposed();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Courses.Where(course =>
+                user.Role == CourseUserRole.Administrator ||
+                course.Visibility == CourseVisibility.Public ||
+                course.Author.Id == user.Id);
+        }
+
         public async Task UpdateAsync(Course course, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();

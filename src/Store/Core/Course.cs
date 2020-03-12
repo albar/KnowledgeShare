@@ -14,7 +14,6 @@ namespace KnowledgeShare.Store.Core
         public CourseUser Author { get; set; }
         public string Title { get; set; }
 
-
         [JsonConverter(typeof(CourseUserConverter))]
         public CourseUser Speaker { get; set; }
         public string Description { get; set; }

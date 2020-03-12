@@ -18,8 +18,7 @@ export const AuthActions = {
 
 export const CourseAction = {
   Create: 'create',
-  Show: 'show',
-  Update: 'update'
+  Detail: 'course/:id',
 };
 
 export const authPrefix = '/authentication';
@@ -41,8 +40,7 @@ export const ApplicationPaths = {
   IdentityLoginPath: '/Identity/Account/Login',
 
   CourseCreate: `/${CourseAction.Create}`,
-  CourseShow: `/${CourseAction.Show}`,
-  CourseUpdate: `/${CourseAction.Update}`
+  CourseDetail: `/${CourseAction.Detail}`,
 };
 
 export const AuthenticationResultStatus = {

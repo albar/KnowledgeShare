@@ -3,23 +3,28 @@ export const ListCourseVisibilities = Symbol('ListCourseVisibilities');
 export const ListUsers = Symbol('ListUsers');
 
 export const CreateCourse = Symbol('CreateCourse');
+export const GetCourseDetail = Symbol('GetCourseDetail');
 
 export default {
   [ListCourses]: {
-    url: '/api/course',
+    resolveUrl: () => '/api/course',
     method: 'get'
   },
   [ListCourseVisibilities]: {
-    url: '/api/course/visibility',
+    resolveUrl: () => '/api/course/visibility',
     method: 'get'
   },
   [ListUsers]: {
-    url: '/api/user',
+    resolveUrl: () => '/api/user',
     method: 'get'
   },
 
   [CreateCourse]: {
-    url: '/api/course',
+    resolveUrl: () => '/api/course',
     method: 'post'
+  },
+  [GetCourseDetail]: {
+    resolveUrl: ({ id }) => `/api/course/${id}`,
+    method: 'get'
   }
 }

@@ -1,5 +1,5 @@
 <template>
-<div>{{ course.title }}</div>
+  <div>{{ course.title }}</div>
 </template>
 
 <script>

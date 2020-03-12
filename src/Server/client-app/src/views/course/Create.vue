@@ -4,7 +4,7 @@
       <div class="create-nav d-flex">
         <button
           @click="cancel"
-          :disabled="state.action !== states.action.Iddle"
+          :disabled="state.action === states.action.Saving"
           class="btn btn-sm btn-outline-secondary ml-auto"
         >Cancel</button>
         <button
@@ -70,6 +70,7 @@ import { ListCourseVisibilities, ListUsers } from "@/client/requests";
 import SessionsManager from "@/components/course/SessionsManager.vue";
 import LocationManager from "@/components/course/LocationManager.vue";
 import { CreateCourse } from "../../client/requests";
+import { ApplicationPaths } from "../../authorization/constants";
 
 const ComponentState = {
   Loading: 0,
@@ -119,16 +120,24 @@ export default {
   },
   methods: {
     async loadVisibilities() {
-      const response = await this.$client.request(ListCourseVisibilities);
-      this.visibilities = await response.json();
+      const response = await this.$client.request({
+        name: ListCourseVisibilities
+      });
+      if (response.ok) {
+        this.visibilities = await response.json();
+      }
     },
     async loadSpeakers() {
-      const response = await this.$client.request(ListUsers);
-      this.speakers = await response.json();
+      const response = await this.$client.request({ name: ListUsers });
+      if (response.ok) {
+        this.speakers = await response.json();
+      }
     },
     async loadLocationTypes() {
-      const response = await this.$client.request(ListLocationTypes);
-      this.locations = await response.json();
+      const response = await this.$client.request({ name: ListLocationTypes });
+      if (response.ok) {
+        this.locations = await response.json();
+      }
     },
     initializeCourse() {
       this.course = {
@@ -141,7 +150,6 @@ export default {
       };
     },
     changeActionState(state) {
-      console.log(state);
       if (state) {
         this.state.action = ActionState.Editing;
       } else {
@@ -153,8 +161,25 @@ export default {
     },
     async save() {
       if (this.course == null) return;
-      await this.$client.request(CreateCourse, this.course);
-      this.$router.push("/");
+
+      this.state.action = ActionState.Saving;
+
+      const response = await this.$client.request({
+        name: CreateCourse,
+        data: this.course
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        this.$router.push({
+          name: "course-detail",
+          params: {
+            id: result.id
+          }
+        });
+      }
+
+      this.state.action = ActionState.Iddle;
     }
   }
 };
