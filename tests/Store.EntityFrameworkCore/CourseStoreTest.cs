@@ -26,7 +26,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore.Test
         protected override ICourseStore GetCourseStore()
         {
             var database = new DatabaseFactory(Connection).Create();
-            return new CourseStore(database);
+            return new CourseStore<CourseDbContext>(database);
         }
     }
 }

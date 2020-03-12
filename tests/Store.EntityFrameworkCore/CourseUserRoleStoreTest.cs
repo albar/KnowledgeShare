@@ -9,7 +9,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore.Test
         protected override ICourseUserRoleStore GetCourseUserRoleStore()
         {
             var fakeDatabase = new Mock<CourseDbContext>();
-            return new CourseUserStore(fakeDatabase.Object);
+            return new CourseUserStore<CourseDbContext>(fakeDatabase.Object);
         }
     }
 }

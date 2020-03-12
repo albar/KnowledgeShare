@@ -11,7 +11,7 @@ namespace KnowledgeShare.Store.EntityFrameworkCore.Test
         protected override ICourseRegistrantStore GetRegistrantCourseStore()
         {
             var fakeDatabase = new Mock<CourseDbContext>();
-            return new CourseStore(fakeDatabase.Object);
+            return new CourseStore<CourseDbContext>(fakeDatabase.Object);
         }
     }
 }

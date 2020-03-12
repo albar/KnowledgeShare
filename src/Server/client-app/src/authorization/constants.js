@@ -16,12 +16,19 @@ export const AuthActions = {
   LoggedOut: 'logged-out',
 };
 
+export const CourseAction = {
+  Create: 'create',
+  Show: 'show',
+  Update: 'update'
+};
+
 export const authPrefix = '/authentication';
 
 export const ApplicationPaths = {
   DefaultLoginRedirectPath: '/',
   ApiAuthorizationClientConfigurationUrl: `/_configuration/${ApplicationName}`,
   ApiAuthorizationPrefix: authPrefix,
+
   Login: `${authPrefix}/${AuthActions.Login}`,
   LoginFailed: `${authPrefix}/${AuthActions.LoginFailed}`,
   LoginCallback: `${authPrefix}/${AuthActions.LoginCallback}`,
@@ -32,6 +39,10 @@ export const ApplicationPaths = {
   LogOutCallback: `${authPrefix}/${AuthActions.LogoutCallback}`,
   IdentityRegisterPath: '/Identity/Account/Register',
   IdentityLoginPath: '/Identity/Account/Login',
+
+  CourseCreate: `/${CourseAction.Create}`,
+  CourseShow: `/${CourseAction.Show}`,
+  CourseUpdate: `/${CourseAction.Update}`
 };
 
 export const AuthenticationResultStatus = {

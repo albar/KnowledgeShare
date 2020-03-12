@@ -1,16 +1,21 @@
-import { authPrefix } from '../authorization/constants';
+import { authPrefix, ApplicationPaths } from '../authorization/constants';
 import Auth from '../authorization/Auth';
-import Courses from '../views/Courses.vue';
 
 export default [
-  {
-    path: '/',
-    name: 'home',
-    component: Courses,
-  },
   {
     path: `${authPrefix}/:action`,
     name: 'auth',
     component: Auth,
   },
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('../views/Courses.vue'),
+  },
+
+  {
+    path: ApplicationPaths.CourseCreate,
+    name: 'course-create',
+    component: () => import('../views/course/Create.vue'),
+  }
 ];
