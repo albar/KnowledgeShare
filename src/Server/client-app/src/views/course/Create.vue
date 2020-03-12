@@ -1,52 +1,161 @@
 <template>
   <div>
-    <div class="form-group form-group-sm">
-      <label class="small">Title</label>
-      <input type="text" class="form-control form-control-sm" placeholder="course title" />
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <label class="small">Visibility</label>
-        <select class="custom-select custom-select-sm">
-          <option v-for="visibility in visibilities" :key="visibility.key">{{ visibility.value }}</option>
-        </select>
+    <template v-if="state.component === states.component.Ready">
+      <div class="create-nav d-flex">
+        <button
+          @click="cancel"
+          :disabled="state.action !== states.action.Iddle"
+          class="btn btn-sm btn-outline-secondary ml-auto"
+        >Cancel</button>
+        <button
+          @click="save"
+          :disabled="state.action !== states.action.Iddle"
+          class="btn btn-sm btn-primary ml-2"
+        >Save</button>
       </div>
-      <div class="col">
-        <label class="small">Speaker</label>
-        <input type="text" class="form-control form-control-sm" placeholder="course title" />
+      <div class="form-group form-group-sm">
+        <label class="small">Title</label>
+        <input
+          v-model="course.title"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="course title"
+        />
       </div>
-    </div>
 
-    <div class="form-group">
-      <label class="small">Description</label>
-      <textarea type="text" class="form-control form-control-sm" placeholder="course description" />
-    </div>
+      <div class="row form-group form-group-sm">
+        <div class="col">
+          <label class="small">Visibility</label>
+          <select v-model="course.visibility" class="custom-select custom-select-sm">
+            <option
+              v-for="visibility in visibilities"
+              :value="visibility.key"
+              :key="visibility.key"
+            >{{ visibility.value }}</option>
+          </select>
+        </div>
+        <div class="col">
+          <label class="small">Speaker</label>
+          <select v-model="course.speaker" class="custom-select custom-select-sm">
+            <option
+              v-for="speaker in speakers"
+              :value="speaker.id"
+              :key="speaker.id"
+            >{{ speaker.email }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="small">Description</label>
+        <textarea
+          v-model="course.description"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="course description"
+        />
+      </div>
+
+      <div class="row">
+        <LocationManager v-model="course.location" class="col" />
+        <SessionsManager v-model="course.sessions" @editing="changeActionState" class="col" />
+      </div>
+    </template>
+    <template v-else>loading ..</template>
   </div>
 </template>
 
 <script>
-import { ListCourseVisibilities } from '@/client/requests';
+import { ListCourseVisibilities, ListUsers } from "@/client/requests";
+import SessionsManager from "@/components/course/SessionsManager.vue";
+import LocationManager from "@/components/course/LocationManager.vue";
+import { CreateCourse } from "../../client/requests";
+
+const ComponentState = {
+  Loading: 0,
+  Ready: 1
+};
+
+const ActionState = {
+  Iddle: 0,
+  Editing: 1,
+  Saving: 2
+};
+
 export default {
+  components: {
+    SessionsManager,
+    LocationManager
+  },
   data: () => ({
+    state: {
+      component: ComponentState.Loading,
+      action: ActionState.Iddle
+    },
     visibilities: [],
     speakers: [],
+    locations: [],
+    course: null
   }),
-  created() {
-      this.loadVisibilities();
-      this.loadSpeakers();    
+  computed: {
+    states() {
+      return {
+        component: ComponentState,
+        action: ActionState
+      };
+    },
+    disabled() {
+      return [State.Loading, State.Saving].includes(this.state);
+    }
+  },
+  async created() {
+    await Promise.all([
+      this.loadVisibilities(),
+      this.loadSpeakers()
+      //   this.loadLocationTypes()
+    ]);
+    this.initializeCourse();
+    this.state.component = ComponentState.Ready;
   },
   methods: {
-      async loadVisibilities() {
-        const response = await this.$client.request(ListCourseVisibilities);
-        this.visibilities = await response.json();
-      },
-      loadSpeakers() {
-
+    async loadVisibilities() {
+      const response = await this.$client.request(ListCourseVisibilities);
+      this.visibilities = await response.json();
+    },
+    async loadSpeakers() {
+      const response = await this.$client.request(ListUsers);
+      this.speakers = await response.json();
+    },
+    async loadLocationTypes() {
+      const response = await this.$client.request(ListLocationTypes);
+      this.locations = await response.json();
+    },
+    initializeCourse() {
+      this.course = {
+        title: null,
+        speaker: this.speakers[0]?.id,
+        visibility: this.visibilities[0]?.key,
+        description: null,
+        location: null,
+        sessions: []
+      };
+    },
+    changeActionState(state) {
+      console.log(state);
+      if (state) {
+        this.state.action = ActionState.Editing;
+      } else {
+        this.state.action = ActionState.Iddle;
       }
+    },
+    cancel() {
+      this.$router.push("/");
+    },
+    async save() {
+      if (this.course == null) return;
+      await this.$client.request(CreateCourse, this.course);
+      this.$router.push("/");
+    }
   }
 };
 </script>
-
-<style>
-</style>

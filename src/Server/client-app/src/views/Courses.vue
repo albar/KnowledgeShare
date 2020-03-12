@@ -1,11 +1,17 @@
 <template>
-  <div>Hello</div>
+  <div>
+    <template v-for="course in courses">
+      <CourseListItem :key="course.id" :course="course" />
+    </template>
+  </div>
 </template>
 
 <script>
 import { ListCourses } from "../client/requests";
+import CourseListItem from "../components/course/CourseListItem.vue";
 
 export default {
+  components: { CourseListItem },
   data: () => ({
     courses: []
   }),

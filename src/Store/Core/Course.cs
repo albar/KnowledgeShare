@@ -1,14 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using KnowledgeShare.Store.Core.Converters;
 
 namespace KnowledgeShare.Store.Core
 {
     public class Course
     {
         public string Id { get; } = Guid.NewGuid().ToString();
+
+        [JsonConverter(typeof(CourseUserConverter))]
         public CourseUser Author { get; set; }
         public string Title { get; set; }
+
+
+        [JsonConverter(typeof(CourseUserConverter))]
         public CourseUser Speaker { get; set; }
         public string Description { get; set; }
         public CourseVisibility Visibility { get; set; }
@@ -57,7 +64,7 @@ namespace KnowledgeShare.Store.Core
             }
 
             _locationType = location.GetType().AssemblyQualifiedName;
-            _location = JsonSerializer.Serialize(location);
+            _location = JsonSerializer.Serialize<object>(location);
         }
     }
 }
