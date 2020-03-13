@@ -54,6 +54,8 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
                 throw new ArgumentNullException(nameof(course));
             }
 
+            course.UpdatedAt = DateTime.Now;
+
             _database.Update(course);
             await SaveChangeAsync(token);
         }
