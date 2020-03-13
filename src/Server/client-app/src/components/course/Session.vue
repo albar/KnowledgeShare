@@ -7,6 +7,9 @@
       <div>
         <small>{{ session.note }}</small>
       </div>
+      <div class="absolute">
+        <button v-if="removable" @click="remove" class="btn btn-sm btn-outline-secondary ml-auto">remove</button>
+      </div>
     </div>
     <template v-else>
       <div class="row form-group form-group-sm">
@@ -60,6 +63,10 @@ export default {
     create: {
       type: Boolean,
       default: false
+    },
+    removable: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -84,6 +91,9 @@ export default {
     },
     save() {
       this.$emit("save", this.session);
+    },
+    remove() {
+      this.$emit('remove')
     }
   }
 };

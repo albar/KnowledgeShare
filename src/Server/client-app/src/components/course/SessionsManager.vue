@@ -2,9 +2,12 @@
   <div>
     <div class="pb-2 session-manager-title">{{ title }}</div>
     <template v-for="(session, i) in sessions">
-      <Session :key="i" :value="session" class="session py-1" />
+      <Session :key="i" :value="session"
+        :removable="removable"
+        class="session py-1"
+        @remove="removeSession(i)" />
     </template>
-    <div class="relative">
+    <div class="relative" v-if="!disabled">
       <transition name="fade">
         <button
           v-if="this.state === this.states.Iddle"
@@ -40,6 +43,10 @@ export default {
     },
     title: {
       default: "Sessions"
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -49,6 +56,9 @@ export default {
   computed: {
     states() {
       return SessionsState;
+    },
+    removable() {
+      return this.state !== SessionsState.Create;
     }
   },
   watch: {
@@ -69,6 +79,10 @@ export default {
       }
 
       this.state = SessionsState.Create;
+    },
+    removeSession(i) {
+      this.sessions.splice(i, 1);
+      this.updateValue();
     },
     cancelCreate() {
       this.state = SessionsState.Iddle;
