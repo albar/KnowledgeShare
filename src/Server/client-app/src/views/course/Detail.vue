@@ -32,6 +32,8 @@ export default {
     });
     if (response.ok) {
       this.course = await response.json();
+    } else {
+      this.$router.push('/');
     }
   },
   methods: {

@@ -194,6 +194,8 @@ export default {
           location: null,
           sessions: [...course.sessions]
         };
+      } else {
+        this.$router.push("/");
       }
     },
     changeActionState(state) {
