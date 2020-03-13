@@ -4,12 +4,12 @@
       <div class="create-nav d-flex">
         <button
           @click="cancel"
-          :disabled="state.action === states.action.Saving"
+          :disabled="loading"
           class="btn btn-sm btn-outline-secondary ml-auto"
         >Cancel</button>
         <button
           @click="save"
-          :disabled="state.action !== states.action.Iddle"
+          :disabled="state.action === states.action.Editing || loading"
           class="btn btn-sm btn-primary ml-2"
         >Save</button>
       </div>
@@ -20,13 +20,18 @@
           type="text"
           class="form-control form-control-sm"
           placeholder="course title"
+          :disabled="loading"
         />
       </div>
 
       <div class="row form-group form-group-sm">
         <div class="col">
           <label class="small">Visibility</label>
-          <select v-model="course.visibility" class="custom-select custom-select-sm">
+          <select
+            v-model="course.visibility"
+            class="custom-select custom-select-sm"
+            :disabled="loading"
+          >
             <option
               v-for="visibility in visibilities"
               :value="visibility.key"
@@ -36,7 +41,11 @@
         </div>
         <div class="col">
           <label class="small">Speaker</label>
-          <select v-model="course.speaker" class="custom-select custom-select-sm">
+          <select
+            v-model="course.speaker"
+            class="custom-select custom-select-sm"
+            :disabled="loading"
+          >
             <option
               v-for="speaker in speakers"
               :value="speaker.id"
@@ -53,12 +62,18 @@
           type="text"
           class="form-control form-control-sm"
           placeholder="course description"
+          :disabled="loading"
         />
       </div>
 
       <div class="row">
-        <LocationManager v-model="course.location" class="col" />
-        <SessionsManager v-model="course.sessions" @editing="changeActionState" class="col" />
+        <LocationManager v-model="course.location" :disabled="loading" class="col" />
+        <SessionsManager
+          v-model="course.sessions"
+          @editing="changeActionState"
+          :disabled="loading"
+          class="col"
+        />
       </div>
     </template>
     <template v-else>loading ..</template>
@@ -105,8 +120,11 @@ export default {
         action: ActionState
       };
     },
-    disabled() {
-      return [State.Loading, State.Saving].includes(this.state);
+    loading() {
+      return (
+        this.state.component === ComponentState.Loading ||
+        this.state.action === ActionState.Saving
+      );
     }
   },
   async created() {
@@ -172,11 +190,16 @@ export default {
       if (response.ok) {
         const result = await response.json();
         this.$router.push({
-          name: "course-detail",
+          name: ApplicationPaths.CourseDetail,
           params: {
             id: result.id
           }
         });
+      } else if (response.status === 400) {
+        // show validation error
+        console.error(await response.json());
+      } else {
+        console.error(response);
       }
 
       this.state.action = ActionState.Iddle;

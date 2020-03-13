@@ -15,12 +15,12 @@ export default [
 
   {
     path: ApplicationPaths.CourseCreate,
-    name: 'course-create',
+    name: ApplicationPaths.CourseCreate,
     component: () => import('../views/course/Create.vue'),
   },
   {
     path: ApplicationPaths.CourseDetail,
-    name: 'course-detail',
+    name: ApplicationPaths.CourseDetail,
     component: () => import('../views/course/Detail.vue'),
   }
 ];

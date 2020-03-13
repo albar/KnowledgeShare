@@ -161,7 +161,7 @@ export class AuthService {
   notifySubscribers() {
     for (let i = 0; i < this._callbacks.length; i++) {
       const { callback } = this._callbacks[i];
-      callback();
+      callback(this._isAuthenticated);
     }
   }
 

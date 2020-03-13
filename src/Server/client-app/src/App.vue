@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="container">
     <nav>
-      <div v-if="authenticated" class="navbar navbar-expand-lg navbar-light">
+      <div v-if="authenticated" class="navbar navbar-expand-lg navbar-light px-2">
         <router-link to="/" class="navbar-brand mr-auto">Courses</router-link>
         <router-link
           tag="button"
@@ -15,11 +15,10 @@
           class="btn btn-sm btn-outline-secondary ml-2 my-2 my-sm-0"
         >Logout</router-link>
       </div>
-      <div class="px-3 pb-2" v-if="!searchDisabled">
-        <input class="form-control form-control-sm" type="search" placeholder="Search" />
-      </div>
     </nav>
-    <router-view v-if="authorized" class="content"></router-view>
+    <transition name="fade">
+      <router-view v-if="authorized" class="content px-4 mt-2 pb-4"></router-view>
+    </transition>
   </div>
 </template>
 
@@ -44,17 +43,24 @@ export default {
     },
     createDisabled() {
       return this.$route.path == ApplicationPaths.CourseCreate;
-    },
-    searchDisabled() {
-      return this.$route.path == ApplicationPaths.CourseCreate;
     }
   },
   created() {
-    this.$auth.subscribe(() => (this.authenticated = true));
+    this.$auth.subscribe(authenticated => {
+      this.authenticated = authenticated;
+      if (!this.authorized) {
+        this.authenticate();
+      }
+    });
   },
   async mounted() {
     this.authenticated = await this.$auth.isAuthenticated();
     if (!this.authorized) {
+      this.authenticate();
+    }
+  },
+  methods: {
+    authenticate() {
       this.$router.push({
         name: "auth",
         params: {
@@ -69,9 +75,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .container {
   max-width: 640px;
+  position: relative;
 }
 
 nav {
@@ -79,6 +86,24 @@ nav {
 }
 
 .content {
-  padding: 0.5rem 1rem;
+  position: absolute;
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+  left: 0;
+  right: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
 }
 </style>
