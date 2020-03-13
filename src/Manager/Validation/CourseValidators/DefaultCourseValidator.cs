@@ -31,13 +31,13 @@ namespace KnowledgeShare.Manager.Validation.CourseValidators
             if (course.Speaker == null)
             {
                 errors.Add(ValidationError.Create(
-                    nameof(course.Author),
+                    nameof(course.Speaker),
                     "Course should have a speaker"));
             }
-            if (course.Sessions.Count == 0)
+            if (course.Sessions == null || course.Sessions.Count == 0)
             {
                 errors.Add(ValidationError.Create(
-                    nameof(course.Author),
+                    nameof(course.Sessions),
                     "Course should at least have a session"));
             }
 

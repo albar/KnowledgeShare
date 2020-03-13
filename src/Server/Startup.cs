@@ -1,6 +1,7 @@
 using Bunnypro.SpaService.VueCli;
 using KnowledgeShare.Manager;
 using KnowledgeShare.Manager.Validation.CourseValidators;
+using KnowledgeShare.Server.Middlewares;
 using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Store.Core;
 using KnowledgeShare.Store.EntityFrameworkCore;
@@ -106,6 +107,8 @@ namespace KnowledgeShare.Server
             app.UseIdentityServer();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
