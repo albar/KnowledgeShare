@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,6 +18,7 @@ namespace KnowledgeShare.Server.Controllers
         public IClientRequestParametersProvider ClientRequestParametersProvider { get; }
 
         [HttpGet("_configuration/{clientId}")]
+        [AllowAnonymous]
         public IActionResult GetClientRequestParameters([FromRoute]string clientId)
         {
             var parameters = ClientRequestParametersProvider.GetClientParameters(HttpContext, clientId);

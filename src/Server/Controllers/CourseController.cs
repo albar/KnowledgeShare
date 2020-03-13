@@ -35,7 +35,6 @@ namespace KnowledgeShare.Server.Controllers
         }
 
         [HttpGet("/api/course")]
-        [Authorize]
         [Produces("application/json")]
         public async Task<IActionResult> ListCourses()
         {
@@ -67,7 +66,6 @@ namespace KnowledgeShare.Server.Controllers
         }
 
         [HttpPost("/api/course")]
-        [Authorize]
         [Produces("application/json")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateCourseModel model)
         {
@@ -90,7 +88,6 @@ namespace KnowledgeShare.Server.Controllers
         }
 
         [HttpGet("/api/course/{id}")]
-        [Authorize]
         [Produces("application/json")]
         public async Task<IActionResult> GetCourse(string id)
         {

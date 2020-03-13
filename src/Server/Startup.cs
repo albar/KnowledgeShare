@@ -6,9 +6,11 @@ using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Store.Core;
 using KnowledgeShare.Store.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +34,14 @@ namespace KnowledgeShare.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
             services.AddRazorPages();
 
             services.AddDbContext<CourseContext>(options =>
