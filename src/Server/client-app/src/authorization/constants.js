@@ -18,7 +18,7 @@ export const AuthActions = {
 
 export const CourseAction = {
   Create: 'create',
-  Detail: 'course/:id',
+  Detail: 'detail/:id',
   Edit: 'edit/:id'
 };
 
