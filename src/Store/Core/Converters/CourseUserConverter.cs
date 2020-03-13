@@ -6,12 +6,18 @@ namespace KnowledgeShare.Store.Core.Converters
 {
     public class CourseUserConverter : JsonConverter<CourseUser>
     {
-        public override CourseUser Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override CourseUser Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options)
         {
             return JsonSerializer.Deserialize<CourseUser>(reader.GetString());
         }
 
-        public override void Write(Utf8JsonWriter writer, CourseUser value, JsonSerializerOptions options)
+        public override void Write(
+            Utf8JsonWriter writer,
+            CourseUser value,
+            JsonSerializerOptions options)
         {
             writer.WriteStartObject();
             writer.WritePropertyName(JsonEncodedText.Encode("id"));
