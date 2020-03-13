@@ -74,7 +74,7 @@ namespace KnowledgeShare.Server.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new CourseUser { UserName = Input.Email, Email = Input.Email };
+                var user = new CourseUser { UserName = Input.Email, Email = Input.Email, Role = CourseUserRole.User };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
