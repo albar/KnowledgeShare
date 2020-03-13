@@ -41,7 +41,7 @@ namespace KnowledgeShare.Server.Controllers
 
         [HttpGet("/api/course")]
         [Produces("application/json")]
-        public async Task<IActionResult> ListCourses()
+        public async Task<IActionResult> ListCoursesAsync()
         {
             var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = await _userManager.FindByIdAsync(userId);
@@ -72,7 +72,7 @@ namespace KnowledgeShare.Server.Controllers
 
         [HttpPost("/api/course")]
         [Produces("application/json")]
-        public async Task<IActionResult> CreateAsync([FromBody] CreateCourseModel model)
+        public async Task<IActionResult> CreateAsync([FromBody] CourseModel model)
         {
             var authorId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var author = await _userManager.FindByIdAsync(authorId);
@@ -105,14 +105,19 @@ namespace KnowledgeShare.Server.Controllers
 
         [HttpGet("/api/course/{id}")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetCourse(string id)
+        public async Task<IActionResult> GetCourseAsync(string id)
         {
             var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = await _userManager.FindByIdAsync(userId);
 
+            var course = await _manager.Courses
+                .Include(course => course.Author)
+                .Include(course => course.Speaker)
+                .FirstAsync(course => course.Id == id);
+
             var result = await _authorization.AuthorizeAsync(
                 _accessor.HttpContext.User,
-                null,
+                course,
                 new ViewCourseRequirement(user));
 
             if (!result.Succeeded)
@@ -120,19 +125,68 @@ namespace KnowledgeShare.Server.Controllers
                 throw new AuthorizationException(result.Failure);
             }
 
-            var courses = await _manager.GetCoursesVisibleTo(user)
-                .FirstAsync(course => course.Id == id);
-
-            return new ObjectResult(courses);
+            return new ObjectResult(course);
         }
 
-        public class CreateCourseModel
+        [HttpPatch("/api/course/{id}")]
+        [Produces("application/json")]
+        public async Task<IActionResult> UpdateCourseAsync(string id, [FromBody] CourseModel model)
+        {
+            var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var course = await _manager.Courses
+                .Include(course => course.Author)
+                .Include(course => course.Speaker)
+                .FirstAsync(course => course.Id == id);
+
+            var result = await _authorization.AuthorizeAsync(
+                _accessor.HttpContext.User,
+                course,
+                new EditCourseRequirement(user));
+
+            if (!result.Succeeded)
+            {
+                throw new AuthorizationException(result.Failure);
+            }
+
+            await model.PutIntoAsync(course, _userManager);
+            await _manager.UpdateAsync(course);
+
+            return new ObjectResult(course);
+        }
+
+        public class CourseModel
         {
             public string Title { get; set; }
             public string Description { get; set; }
             public string Speaker { get; set; }
             public CourseVisibility Visibility { get; set; }
-            public List<Session> Sessions { get; set; } = new List<Session>();
+            public List<Session> Sessions { get; set; }
+
+            public async Task PutIntoAsync(Course course, CourseUserManager manager = null)
+            {
+                if (!string.IsNullOrWhiteSpace(Title))
+                {
+                    course.Title = Title;
+                }
+                if (!string.IsNullOrWhiteSpace(Description))
+                {
+                    course.Description = Description;
+                }
+                if (string.IsNullOrWhiteSpace(Speaker) &&
+                    course.Speaker.Id != Speaker &&
+                    manager != null)
+                {
+                    var speaker = await manager.FindByIdAsync(Speaker);
+                    course.Speaker = speaker;
+                }
+                course.Visibility = Visibility;
+                if (Sessions != null)
+                {
+                    course.Sessions = Sessions;
+                }
+            }
         }
     }
 }

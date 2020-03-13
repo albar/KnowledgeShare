@@ -15,6 +15,7 @@ namespace KnowledgeShare.Server.Authorization.CourseAuthorization
         public Task<bool> CheckAsync(Course course)
         {
             var result = _accessor.Role == CourseUserRole.Administrator ||
+                course.Author.Role == CourseUserRole.Manager &&
                 course.Author.Id == _accessor.Id;
 
             return Task.FromResult(result);
