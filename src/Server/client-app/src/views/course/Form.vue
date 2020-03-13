@@ -84,7 +84,11 @@
 import { ListCourseVisibilities, ListUsers } from "@/client/requests";
 import SessionsManager from "@/components/course/SessionsManager.vue";
 import LocationManager from "@/components/course/LocationManager.vue";
-import { CreateCourse } from "../../client/requests";
+import {
+  CreateCourse,
+  UpdateCourse,
+  GetCourseDetail
+} from "../../client/requests";
 import { ApplicationPaths } from "../../authorization/constants";
 
 const ComponentState = {
@@ -111,7 +115,8 @@ export default {
     visibilities: [],
     speakers: [],
     locations: [],
-    course: null
+    course: null,
+    edit: false
   }),
   computed: {
     states() {
@@ -133,7 +138,11 @@ export default {
       this.loadSpeakers()
       //   this.loadLocationTypes()
     ]);
-    this.initializeCourse();
+    if (!!this.$route.params.id) {
+      await this.setupCourse(this.$route.params.id);
+    } else {
+      this.initializeCourse();
+    }
     this.state.component = ComponentState.Ready;
   },
   methods: {
@@ -167,6 +176,26 @@ export default {
         sessions: []
       };
     },
+    async setupCourse(id) {
+      this.edit = true;
+      const response = await this.$client.request({
+        name: GetCourseDetail,
+        args: {
+          id
+        }
+      });
+      if (response.ok) {
+        const course = await response.json();
+        this.course = {
+          title: course.title,
+          speaker: course.speaker.id,
+          visibility: course.visibility,
+          description: course.description,
+          location: null,
+          sessions: [...course.sessions]
+        };
+      }
+    },
     changeActionState(state) {
       if (state) {
         this.state.action = ActionState.Editing;
@@ -175,17 +204,30 @@ export default {
       }
     },
     cancel() {
-      this.$router.push("/");
+      if (this.$route.params.id !== null) {
+        this.$router.push({
+          name: ApplicationPaths.CourseDetail,
+          params: {
+            id: this.$route.params.id
+          }
+        });
+      } else {
+        this.$router.push("/");
+      }
     },
     async save() {
       if (this.course == null) return;
 
       this.state.action = ActionState.Saving;
 
-      const response = await this.$client.request({
-        name: CreateCourse,
-        data: this.course
-      });
+      let request = null;
+      if (this.edit) {
+        request = this.update();
+      } else {
+        request = this.create();
+      }
+
+      const response = await request;
 
       if (response.ok) {
         const result = await response.json();
@@ -203,6 +245,21 @@ export default {
       }
 
       this.state.action = ActionState.Iddle;
+    },
+    async create() {
+      return await this.$client.request({
+        name: CreateCourse,
+        data: this.course
+      });
+    },
+    async update() {
+      return await this.$client.request({
+        name: UpdateCourse,
+        args: {
+          id: this.$route.params.id
+        },
+        data: this.course
+      });
     }
   }
 };

@@ -19,6 +19,7 @@ export const AuthActions = {
 export const CourseAction = {
   Create: 'create',
   Detail: 'course/:id',
+  Edit: 'edit/:id'
 };
 
 export const authPrefix = '/authentication';
@@ -41,6 +42,7 @@ export const ApplicationPaths = {
 
   CourseCreate: `/${CourseAction.Create}`,
   CourseDetail: `/${CourseAction.Detail}`,
+  CourseEdit: `/${CourseAction.Edit}`,
 };
 
 export const AuthenticationResultStatus = {

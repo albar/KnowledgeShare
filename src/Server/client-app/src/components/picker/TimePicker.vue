@@ -1,7 +1,7 @@
 <template>
   <div class="time-picker input-group input-group-sm d-flex" :class="{borderless}">
-    <input v-model="value.hour" @change="update" type="number" class="time-input form-control text-center flex-shrink-1" placeholder="hh" />:
-    <input v-model="value.minute" @change="update" type="number" class="time-input form-control text-center flex-shrink-1" placeholder="mm" />
+    <input v-model.number="value.hour" @change="update" type="number" class="time-input form-control text-center flex-shrink-1" placeholder="hh" />:
+    <input v-model.number="value.minute" @change="update" type="number" class="time-input form-control text-center flex-shrink-1" placeholder="mm" />
   </div>
 </template>
 

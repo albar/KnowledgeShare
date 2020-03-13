@@ -1,16 +1,20 @@
 <template>
-  <div v-if="session">
-    <div v-if="this.state === this.states.Read">
+  <div v-if="session" class="session-item">
+    <template v-if="this.state === this.states.Read">
       <div>
-        <small>{{ session.start.toLocaleString() }} - {{ session.end.toLocaleString() }}</small>
+        <div class="session-date-time">form: {{ session.start.toLocaleString() }}</div>
+        <div class="session-date-time">until: {{ session.end.toLocaleString() }}</div>
       </div>
       <div>
         <small>{{ session.note }}</small>
       </div>
-      <div class="absolute">
-        <button v-if="removable" @click="remove" class="btn btn-sm btn-outline-secondary ml-auto">remove</button>
+      <div class="action absolute d-flex justify-content-between pr-2">
+        <button v-if="editable" @click="edit" class="btn btn-sm btn-link">edit</button>
+        <button v-if="removable" @click="remove" type="button" class="close btn">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    </div>
+    </template>
     <template v-else>
       <div class="row form-group form-group-sm">
         <div class="col">
@@ -45,9 +49,8 @@
 import DateTimePicker from "../picker/DateTimePicker.vue";
 
 const State = {
-  Create: 0,
-  Read: 1,
-  Edit: 2
+  Read: 0,
+  Write: 1,
 };
 
 export default {
@@ -60,9 +63,13 @@ export default {
         note: null
       })
     },
-    create: {
+    write: {
       type: Boolean,
       default: false
+    },
+    editable: {
+      type: Boolean,
+      default: false,
     },
     removable: {
       type: Boolean,
@@ -73,24 +80,44 @@ export default {
     session: null,
     state: State.Read
   }),
+  watch : {
+    value(val) {
+      this.setup(val);
+    }
+  },
   computed: {
     states() {
       return State;
     }
   },
   mounted() {
-    this.session = this.value;
+    this.setup(this.value);
 
-    if (this.create) {
-      this.state = State.Create;
+    if (this.write) {
+      this.state = State.Write;
     }
   },
   methods: {
+    setup(value) {this.session = {
+      start: new Date(value.start),
+      end: new Date(value.end),
+      note: value.note,
+    };
+    },
     cancel() {
+      this.session = {
+        ...this.value
+      };
+      this.state = State.Read;
       this.$emit("cancel");
     },
     save() {
       this.$emit("save", this.session);
+      this.state = State.Read;
+    },
+    edit() {
+      this.$emit('edit');
+      this.state = State.Write;
     },
     remove() {
       this.$emit('remove')
@@ -98,3 +125,26 @@ export default {
   }
 };
 </script>
+
+<style>
+.session-item {
+  position: relative;
+}
+.session-item .action {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: none !important;
+  background: white;
+}
+.session-item:hover .action {
+  display: flex !important;
+}
+.session-item .action .btn {
+  height: max-content;
+}
+.session-date-time {
+  font-size: 65%;
+}
+</style>

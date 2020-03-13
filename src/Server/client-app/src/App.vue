@@ -3,11 +3,13 @@
     <nav>
       <div v-if="authenticated" class="navbar navbar-expand-lg navbar-light px-2">
         <router-link to="/" class="navbar-brand mr-auto">Courses</router-link>
+        {{ user.name }} |
         <router-link
           tag="button"
           :to="paths.CourseCreate"
           :disabled="createDisabled"
-          class="btn btn-sm btn-primary ml-3 my-2 my-sm-0"
+          class="btn btn-sm ml-3 my-2 my-sm-0"
+          :class="createDisabled ? 'btn-outline-secondary' : 'btn-primary'"
         >Create</router-link>
         <router-link
           tag="button"
@@ -32,32 +34,40 @@ import {
 
 export default {
   data: () => ({
-    authenticated: false
+    user: {},
+    authenticated: false,
+    paths: {
+      ...ApplicationPaths
+    }
   }),
   computed: {
     authorized() {
       return this.authenticated || this.$route.path.startsWith(authPrefix);
     },
-    paths() {
-      return ApplicationPaths;
-    },
     createDisabled() {
       return this.$route.path == ApplicationPaths.CourseCreate;
     }
   },
-  created() {
-    this.$auth.subscribe(authenticated => {
+  async created() {
+    this.$auth.subscribe(async authenticated => {
       this.authenticated = authenticated;
       if (!this.authorized) {
+        console.log("signed out");
         this.authenticate();
+        return;
       }
+      this.user = await this.$auth.getUser();
+
+      this.gatherData();
     });
-  },
-  async mounted() {
+
     this.authenticated = await this.$auth.isAuthenticated();
     if (!this.authorized) {
       this.authenticate();
+      return;
     }
+
+    this.user = await this.$auth.getUser();
   },
   methods: {
     authenticate() {
@@ -70,6 +80,9 @@ export default {
           [QueryParameterNames.ReturnUrl]: this.$route.path
         }
       });
+    },
+    gatherData() {
+      // load roles
     }
   }
 };

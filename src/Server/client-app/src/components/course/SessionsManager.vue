@@ -3,8 +3,12 @@
     <div class="pb-2 session-manager-title">{{ title }}</div>
     <template v-for="(session, i) in sessions">
       <Session :key="i" :value="session"
-        :removable="removable"
+        :removable="editable"
+        :editable="editable"
         class="session py-1"
+        @edit="edit"
+        @cancel="cancelCreate"
+        @save="updateSession(i, $event)"
         @remove="removeSession(i)" />
     </template>
     <div class="relative" v-if="!disabled">
@@ -16,7 +20,7 @@
         >Add Session</button>
         <Session
           v-else-if="this.state === this.states.Create"
-          create
+          write
           @cancel="cancelCreate"
           @save="saveCreate"
           class="absolute"
@@ -57,7 +61,7 @@ export default {
     states() {
       return SessionsState;
     },
-    removable() {
+    editable() {
       return this.state !== SessionsState.Create;
     }
   },
@@ -79,6 +83,13 @@ export default {
       }
 
       this.state = SessionsState.Create;
+    },
+    edit() {
+      this.state = SessionsState.Edit;
+    },
+    updateSession(i, session) {
+      this.sessions.splice(i, 1, session);
+      this.state = SessionsState.Iddle;
     },
     removeSession(i) {
       this.sessions.splice(i, 1);

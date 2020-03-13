@@ -1,8 +1,8 @@
 <template>
   <div class="date-picker input-group input-group-sm d-flex" :class="{borderless: borderless}">
-    <input v-model="value.date" @change="update" type="number" class="date-input form-control text-center flex-shrink-1" placeholder="dd" />/
-    <input v-model="value.month" @change="update" type="number" class="date-input form-control text-center flex-shrink-1" placeholder="mm" />/
-    <input v-model="value.year" @change="update" type="number" class="date-input form-control text-center flex-grow-1" placeholder="yyyy" />
+    <input v-model.number="value.date" @change="update" type="number" class="date-input form-control text-center flex-shrink-1" placeholder="dd" />/
+    <input v-model.number="value.month" @change="update" type="number" class="date-input form-control text-center flex-shrink-1" placeholder="mm" />/
+    <input v-model.number="value.year" @change="update" type="number" class="date-input form-control text-center flex-grow-1" placeholder="yyyy" />
   </div>
 </template>
 

@@ -16,11 +16,16 @@ export default [
   {
     path: ApplicationPaths.CourseCreate,
     name: ApplicationPaths.CourseCreate,
-    component: () => import('../views/course/Create.vue'),
+    component: () => import('../views/course/Form.vue'),
   },
   {
     path: ApplicationPaths.CourseDetail,
     name: ApplicationPaths.CourseDetail,
     component: () => import('../views/course/Detail.vue'),
+  },
+  {
+    path: ApplicationPaths.CourseEdit,
+    name: ApplicationPaths.CourseEdit,
+    component: () => import('../views/course/Form.vue'),
   }
 ];

@@ -37,6 +37,7 @@ export default {
 
   methods: {
     async login(returnUrl) {
+      console.log(returnUrl);
       const state = { returnUrl };
       const result = await this.$auth.signIn(state);
       switch (result.status) {
@@ -114,7 +115,8 @@ export default {
       const fromQuery = params.get(QueryParameterNames.ReturnUrl);
       if (fromQuery && !fromQuery.startsWith(`${window.location.origin}/`)) {
         // This is an extra check to prevent open redirects.
-        throw new Error("Invalid return url. The return url needs to have the same origin as the current page.")
+        console.warn("Invalid return url. The return url needs to have the same origin as the current page.")
+        return '/';
       }
       return (state && state.returnUrl) || fromQuery || `/`;
     }
