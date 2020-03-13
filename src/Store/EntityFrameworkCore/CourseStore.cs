@@ -49,6 +49,11 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
         {
             token.ThrowIfCancellationRequested();
 
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+            }
+
             _database.Update(course);
             await SaveChangeAsync(token);
         }
