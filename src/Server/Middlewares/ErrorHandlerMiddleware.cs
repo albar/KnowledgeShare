@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using KnowledgeShare.Manager.Validation;
+using KnowledgeShare.Server.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +29,8 @@ namespace KnowledgeShare.Server.Middlewares
             }
             catch (ValidationException exception)
             {
+                if (context.Response.HasStarted) throw;
+
                 var errorsString = JsonSerializer.Serialize(exception.Errors);
 
                 _logger.LogError(errorsString);
@@ -37,6 +40,22 @@ namespace KnowledgeShare.Server.Middlewares
                 context.Response.ContentType = "application/json";
 
                 await context.Response.WriteAsync(errorsString);
+
+                return;
+            }
+            catch (AuthorizationException exception)
+            {
+                if (context.Response.HasStarted) throw;
+
+                var errorString = JsonSerializer.Serialize(exception.Failure);
+
+                _logger.LogError(errorString);
+
+                context.Response.Clear();
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsync("Unauthorized");
 
                 return;
             }

@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using KnowledgeShare.Manager;
 using KnowledgeShare.Manager.Validation;
+using KnowledgeShare.Server.Authorization;
+using KnowledgeShare.Server.Authorization.CourseAuthorization;
 using KnowledgeShare.Store.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,17 +22,20 @@ namespace KnowledgeShare.Server.Controllers
         private readonly CourseUserManager _userManager;
         private readonly CourseManager _manager;
         private readonly IHttpContextAccessor _accessor;
+        private readonly IAuthorizationService _authorization;
         private readonly ILogger<CourseController> _logger;
 
         public CourseController(
             CourseUserManager userManager,
             CourseManager manager,
             IHttpContextAccessor accessor,
+            IAuthorizationService authorization,
             ILogger<CourseController> logger)
         {
             _userManager = userManager;
             _manager = manager;
             _accessor = accessor;
+            _authorization = authorization;
             _logger = logger;
         }
 
@@ -71,6 +76,17 @@ namespace KnowledgeShare.Server.Controllers
         {
             var authorId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var author = await _userManager.FindByIdAsync(authorId);
+
+            var result = await _authorization.AuthorizeAsync(
+                _accessor.HttpContext.User,
+                null,
+                new CreateCourseRequirement(author));
+
+            if (!result.Succeeded)
+            {
+                throw new AuthorizationException(result.Failure);
+            }
+
             var speaker = await _userManager.FindByIdAsync(model.Speaker);
             var course = new Course
             {
@@ -93,9 +109,19 @@ namespace KnowledgeShare.Server.Controllers
         {
             var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = await _userManager.FindByIdAsync(userId);
+
+            var result = await _authorization.AuthorizeAsync(
+                _accessor.HttpContext.User,
+                null,
+                new ViewCourseRequirement(user));
+
+            if (!result.Succeeded)
+            {
+                throw new AuthorizationException(result.Failure);
+            }
+
             var courses = await _manager.GetCoursesVisibleTo(user)
-                .Where(course => course.Id == id)
-                .FirstAsync();
+                .FirstAsync(course => course.Id == id);
 
             return new ObjectResult(courses);
         }
