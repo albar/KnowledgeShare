@@ -18,7 +18,7 @@
         >Logout</router-link>
       </div>
     </nav>
-    <transition name="fade">
+    <transition name="fade" mode="out-in">
       <router-view v-if="authorized" class="content px-4 mt-2 pb-4"></router-view>
     </transition>
   </div>
@@ -100,14 +100,14 @@ nav {
 
 .content {
   position: absolute;
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: all 0.2s cubic-bezier(0.55, 0, 0.1, 1);
   left: 0;
   right: 0;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.2s ease;
 }
 .fade-enter,
 .fade-leave-active {

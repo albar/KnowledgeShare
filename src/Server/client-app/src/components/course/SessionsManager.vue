@@ -12,7 +12,7 @@
         @remove="removeSession(i)" />
     </template>
     <div class="relative" v-if="!disabled">
-      <transition name="fade">
+      <transition name="fade" mode="out-in">
         <button
           v-if="this.state === this.states.Iddle"
           @click="addSession"
