@@ -206,7 +206,7 @@ export default {
       }
     },
     cancel() {
-      if (this.$route.params.id !== null) {
+      if (this.edit) {
         this.$router.push({
           name: ApplicationPaths.CourseDetail,
           params: {
