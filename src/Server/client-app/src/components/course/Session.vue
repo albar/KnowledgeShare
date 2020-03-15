@@ -99,8 +99,8 @@ export default {
   },
   methods: {
     setup(value) {this.session = {
-      start: new Date(value.start),
-      end: new Date(value.end),
+      start: !!value.start ? new Date(value.start) : new Date(),
+      end: !!value.end ? new Date(value.end) : new Date(),
       note: value.note,
     };
     },
