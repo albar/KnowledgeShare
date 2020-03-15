@@ -28,6 +28,10 @@ namespace KnowledgeShare.Store.Core
         public List<Registrant> Registrants { get; } = new List<Registrant>();
         public List<Feedback> Feedbacks { get; } = new List<Feedback>();
 
+        public int FeedbackCount { get; set; }
+        public double FeedbackRateAverage { get; set; }
+        public FeedbackRate FeedbackRate { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 

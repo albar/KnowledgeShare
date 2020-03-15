@@ -1,8 +1,11 @@
 using Bunnypro.SpaService.VueCli;
 using KnowledgeShare.Manager;
+using KnowledgeShare.Manager.Abstractions;
 using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Server.Authorization.CourseAuthorization;
+using KnowledgeShare.Server.EventHandlers;
 using KnowledgeShare.Server.Middlewares;
+using KnowledgeShare.Server.Services.CourseFeedbackAggregation;
 using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Store.Core;
 using KnowledgeShare.Store.EntityFrameworkCore;
@@ -16,7 +19,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace KnowledgeShare.Server
@@ -40,7 +42,7 @@ namespace KnowledgeShare.Server
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
-                
+
                 config.Filters.Add(new AuthorizeFilter(policy));
             });
             services.AddRazorPages();
@@ -62,6 +64,8 @@ namespace KnowledgeShare.Server
 
             services.AddHttpContextAccessor();
 
+            services.AddCourseFeedbackAggregation();
+
             services.AddScoped<IUserStore<CourseUser>, CourseUserStore<CourseContext>>();
             services.AddScoped<ICourseStore, CourseStore<CourseContext>>();
 
@@ -80,7 +84,7 @@ namespace KnowledgeShare.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
-            
+
             services.AddScoped<IAuthorizationHandler, CourseAuthorizationHandler>();
 
             services.AddSpaStaticFiles(config =>
