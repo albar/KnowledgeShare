@@ -20,7 +20,8 @@ namespace KnowledgeShare.Manager
             IEnumerable<IUserValidator<CourseUser>> userValidators,
             IEnumerable<IPasswordValidator<CourseUser>> passwordValidators,
             ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors,
-            IServiceProvider services, ILogger<UserManager<CourseUser>> logger) :
+            IServiceProvider services,
+            ILogger<UserManager<CourseUser>> logger) :
             base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
