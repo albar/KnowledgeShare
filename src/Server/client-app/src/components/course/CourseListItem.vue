@@ -1,7 +1,7 @@
 <template>
   <div class="course-list-item">
+    <div :class="{'course-title-link': link}" @click="gotoLink">{{ course.title || 'Untitled' }}</div>
     <small class="item-info">Posted by {{ course.author.email }} at {{ updatedAt }}</small>
-    <div :class="{'course-title-link': link}" @click="gotoLink">{{ course.title }}</div>
     <small>{{ course.description }}</small>
   </div>
 </template>
