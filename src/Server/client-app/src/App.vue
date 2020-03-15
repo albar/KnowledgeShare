@@ -45,7 +45,10 @@ export default {
       return this.authenticated || this.$route.path.startsWith(authPrefix);
     },
     createDisabled() {
-      return this.$route.path == ApplicationPaths.CourseCreate;
+      return [
+        ApplicationPaths.CourseCreate,
+        ApplicationPaths.CourseEdit
+      ].includes(this.$route.name);
     }
   },
   async created() {
