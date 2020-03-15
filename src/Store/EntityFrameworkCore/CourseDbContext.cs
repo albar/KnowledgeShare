@@ -65,11 +65,21 @@ namespace KnowledgeShare.Store.EntityFrameworkCore
             builder.Entity<Registrant>(entity =>
             {
                 entity.HasKey(registrant => registrant.Id);
+                entity.HasAlternateKey(registrant => new
+                {
+                    registrant.CourseId,
+                    registrant.UserId,
+                });
             });
 
             builder.Entity<Feedback>(entity =>
             {
                 entity.HasKey(feedback => feedback.Id);
+                entity.HasAlternateKey(feedback => new
+                {
+                    feedback.CourseId,
+                    feedback.UserId,
+                });
             });
         }
 
