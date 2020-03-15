@@ -12,11 +12,12 @@
       </ul>
     </div>
     <button @click="edit">edit</button>
+    <button @click="register">register</button>
   </div>
 </template>
 
 <script>
-import { GetCourseDetail } from "@/client/requests";
+import { GetCourseDetail, RegisterCourse } from "@/client/requests";
 import { ApplicationPaths } from '../../authorization/constants';
 
 export default {
@@ -44,6 +45,14 @@ export default {
           id: this.$route.params.id,
         }
       })
+    },
+    async register() {
+      await this.$client.request({
+        name: RegisterCourse,
+        args: {
+          id: this.$route.params.id,
+        }
+      });
     }
   }
 };

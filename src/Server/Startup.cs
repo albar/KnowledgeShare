@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Bunnypro.SpaService.VueCli;
 using KnowledgeShare.Manager;
 using KnowledgeShare.Manager.Abstractions;
@@ -5,6 +7,7 @@ using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Server.Authorization.CourseAuthorization;
 using KnowledgeShare.Server.EventHandlers;
 using KnowledgeShare.Server.Middlewares;
+using KnowledgeShare.Server.Notification;
 using KnowledgeShare.Server.Services.CourseFeedbackAggregation;
 using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Store.Core;
@@ -15,6 +18,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +69,7 @@ namespace KnowledgeShare.Server
             services.AddHttpContextAccessor();
 
             services.AddCourseFeedbackAggregation();
+            services.AddScoped<ICourseManagerEventHandler, CourseManagerEventHandler>();
 
             services.AddScoped<IUserStore<CourseUser>, CourseUserStore<CourseContext>>();
             services.AddScoped<ICourseStore, CourseStore<CourseContext>>();
@@ -84,6 +89,9 @@ namespace KnowledgeShare.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            services.AddSingleton<IUserIdProvider, CourseUserIdProvider>();
+            services.AddSignalR();
 
             services.AddScoped<IAuthorizationHandler, CourseAuthorizationHandler>();
 
@@ -110,6 +118,8 @@ namespace KnowledgeShare.Server
             {
                 app.UseDeveloperExceptionPage();
                 app.UseCors(DevelopmentOnlyCors);
+
+                SeedUsers(app.ApplicationServices);
             }
 
             // app.UseHttpsRedirection();
@@ -130,6 +140,7 @@ namespace KnowledgeShare.Server
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+                endpoints.MapHub<KnowledgeShareNotificationHub>("/hub/notification");
             });
 
             app.UseSpa(spa =>
@@ -141,6 +152,29 @@ namespace KnowledgeShare.Server
                     spa.UseVueCliServer(npmScript: "serve");
                 }
             });
+        }
+
+        private void SeedUsers(IServiceProvider services)
+        {
+            using var scoped = services.CreateScope();
+            using var userManager = scoped.ServiceProvider.GetRequiredService<UserManager<CourseUser>>();
+            var users = Enum.GetValues(typeof(CourseUserRole))
+                .Cast<CourseUserRole>()
+                .Select(role => new CourseUser
+                {
+                    UserName = $"{role.ToString().ToLower()}@share.com",
+                    Email = $"{role.ToString().ToLower()}@share.com",
+                    Role = role,
+                });
+
+            foreach (var user in users)
+            {
+                var exists = userManager.FindByEmailAsync(user.Email).Result;
+                if (exists == null)
+                {
+                    userManager.CreateAsync(user, $"{user.Role}_123").Wait();
+                }
+            }
         }
     }
 }

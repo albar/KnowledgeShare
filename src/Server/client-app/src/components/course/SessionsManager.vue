@@ -16,14 +16,14 @@
         <button
           v-if="this.state === this.states.Iddle"
           @click="addSession"
-          class="absolute btn btn-sm btn-block btn-light mt-3"
+          class="absolute btn btn-sm btn-block btn-light mt-3 transition"
         >Add Session</button>
         <Session
           v-else-if="this.state === this.states.Create"
           write
           @cancel="cancelCreate"
           @save="saveCreate"
-          class="absolute"
+          class="absolute transition"
         />
       </transition>
     </div>

@@ -75,9 +75,11 @@ namespace KnowledgeShare.Server.Controllers
             var authorId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var author = await _userManager.FindByIdAsync(authorId);
 
+            _logger.LogInformation(author.Role.ToString());
+
             var result = await _authorization.AuthorizeAsync(
                 _accessor.HttpContext.User,
-                null,
+                new Course(),
                 new CreateCourseRequirement(author));
 
             if (!result.Succeeded)
@@ -152,6 +154,32 @@ namespace KnowledgeShare.Server.Controllers
             await _manager.UpdateAsync(course);
 
             return new ObjectResult(course);
+        }
+
+        [HttpPost("/api/course/{id}/register")]
+        [Produces("application/json")]
+        public async Task<IActionResult> RegisterAsync(string id)
+        {
+            var userId = _accessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var course = await _manager.Courses
+                .Include(course => course.Author)
+                .Include(course => course.Speaker)
+                .FirstAsync(course => course.Id == id);
+
+            var result = await _authorization.AuthorizeAsync(
+                _accessor.HttpContext.User,
+                course,
+                new RegisterCourseRequirement());
+
+            if (!result.Succeeded)
+            {
+                throw new AuthorizationException(result.Failure);
+            }
+
+            await _manager.RegisterUserToAsync(course, user);
+            return new OkResult();
         }
 
         public class CourseModel

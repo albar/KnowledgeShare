@@ -9,18 +9,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using KnowledgeShare.Store.Core;
+using System.Security.Claims;
 
 namespace KnowledgeShare.Server.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
+        private readonly UserManager<CourseUser> _userManager;
         private readonly SignInManager<CourseUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<CourseUser> signInManager,
+        public LoginModel(
+            UserManager<CourseUser> userManager,
+            SignInManager<CourseUser> signInManager,
             ILogger<LoginModel> logger)
         {
+            _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
         }
@@ -84,6 +89,8 @@ namespace KnowledgeShare.Server.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, user.Id));
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -5,6 +5,7 @@ export const ListUsers = Symbol('ListUsers');
 export const CreateCourse = Symbol('CreateCourse');
 export const GetCourseDetail = Symbol('GetCourseDetail');
 export const UpdateCourse = Symbol('UpdateCourse');
+export const RegisterCourse = Symbol('RegisterCourse');
 
 export default {
   [ListCourses]: {
@@ -31,5 +32,9 @@ export default {
   [UpdateCourse]: {
     resolveUrl: ({ id }) => `/api/course/${id}`,
     method: 'patch'
+  },
+  [RegisterCourse]: {
+    resolveUrl: ({ id }) => `/api/course/${id}/register`,
+    method: 'post'
   }
 }

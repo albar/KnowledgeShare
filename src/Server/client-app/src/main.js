@@ -4,6 +4,7 @@ import { createRouter } from './router';
 import store from './store';
 import AuthService from './authorization/service';
 import { HttpClient } from './client';
+import { createNotificationHub } from './hubs/notification'
 
 Vue.config.productionTip = false;
 
@@ -19,6 +20,7 @@ function redirect(path) {
 const auth = new AuthService(authServer);
 Vue.prototype.$auth = auth;
 Vue.prototype.$client = new HttpClient(apiServer, auth, redirect);
+Vue.prototype.$notification = createNotificationHub(apiServer, auth);
 
 new Vue({
   router,
