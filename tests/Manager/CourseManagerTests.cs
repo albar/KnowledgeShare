@@ -10,6 +10,7 @@ using KnowledgeShare.Store.Abstractions;
 using Moq;
 using Xunit;
 using KnowledgeShare.Manager.Exceptions;
+using KnowledgeShare.Manager.Abstractions;
 
 namespace KnowledgeShare.Manager.Test
 {
@@ -24,9 +25,12 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await manager.CreateAsync(new Course());
 
@@ -99,6 +103,8 @@ namespace KnowledgeShare.Manager.Test
                     return Task.FromResult(ValidationResult.Success);
                 });
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseUser author = CreateUser(authorRole);
             CourseUser speaker = CreateUser();
             ILocation location = null;
@@ -110,7 +116,10 @@ namespace KnowledgeShare.Manager.Test
                 .Select(_ => new Session())
                 .ToList();
 
-            CourseManager manager = new CourseManager(fakeStore.Object, new ICourseValidator[] { fakeValidator.Object });
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { fakeValidator.Object },
+                fakeEventHandler.Object);
 
             ValidationException exception = await Assert.ThrowsAsync<ValidationException>(async () =>
                 await manager.CreateAsync(new Course
@@ -141,9 +150,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Creating_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.CreateAsync(null));
@@ -161,9 +173,12 @@ namespace KnowledgeShare.Manager.Test
                 .Returns<string, CancellationToken>((id, _) =>
                     new ValueTask<Course>(id == course.Id ? course : null));
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             Course foundCourse = await manager.FindByIdAsync(course.Id);
 
@@ -191,9 +206,12 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(ValidationResult.Success));
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { fakeValidator.Object });
+                new ICourseValidator[] { fakeValidator.Object },
+                fakeEventHandler.Object);
 
             await manager.UpdateAsync(new Course());
 
@@ -272,6 +290,8 @@ namespace KnowledgeShare.Manager.Test
                     return Task.FromResult(ValidationResult.Success);
                 });
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseUser author = CreateUser(authorRole);
             CourseUser speaker = CreateUser();
             ILocation location = null;
@@ -283,7 +303,10 @@ namespace KnowledgeShare.Manager.Test
                 .Select(_ => new Session())
                 .ToList();
 
-            CourseManager manager = new CourseManager(fakeStore.Object, new ICourseValidator[] { fakeValidator.Object });
+            CourseManager manager = new CourseManager(
+                fakeStore.Object,
+                new ICourseValidator[] { fakeValidator.Object },
+                fakeEventHandler.Object);
 
             ValidationException exception = await Assert.ThrowsAsync<ValidationException>(async () =>
                 await manager.UpdateAsync(new Course
@@ -314,9 +337,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Updating_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.UpdateAsync(null));
@@ -356,9 +382,12 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(ValidationResult.Success));
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeCourseStore.Object,
-                new ICourseValidator[] { fakeValidator.Object });
+                new ICourseValidator[] { fakeValidator.Object },
+                fakeEventHandler.Object);
 
             CourseUser user = CreateUser();
             Course course = new Course();
@@ -420,9 +449,12 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(ValidationResult.Success));
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeCourseStore.Object,
-                new ICourseValidator[] { fakeValidator.Object });
+                new ICourseValidator[] { fakeValidator.Object },
+                fakeEventHandler.Object);
 
             IEnumerable<CourseUser> users = Enumerable.Range(0, usersCount)
                 .Select(_ => CreateUser());
@@ -457,10 +489,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Registering_User_With_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
 
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.RegisterUserToAsync(null, CreateUser()));
@@ -474,10 +508,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Registering_Multiple_Users_With_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
 
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.RegisterUsersToAsync(
@@ -497,9 +533,12 @@ namespace KnowledgeShare.Manager.Test
             fakeStore.Setup(store => store.GetRegistrants(It.IsAny<Course>()))
                 .Returns(It.IsAny<IQueryable<Registrant>>());
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.As<ICourseStore>().Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             IQueryable<Registrant> _ = manager.GetReigstrants(new Course());
 
@@ -512,10 +551,12 @@ namespace KnowledgeShare.Manager.Test
         public void Throw_When_Get_Queryable_Registrants_With_Null()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
 
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             Assert.Throws<ArgumentNullException>(() =>
                 manager.GetReigstrants(null));
@@ -525,9 +566,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Trying_To_Add_Registrant_But_Store_Not_Implement_Related_Interface()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
                 await manager.RegisterUserToAsync(
@@ -539,9 +583,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Trying_To_Add_Registrants_But_Store_Not_Implement_Related_Interface()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
                 await manager.RegisterUsersToAsync(
@@ -556,9 +603,12 @@ namespace KnowledgeShare.Manager.Test
             fakeStore.Setup(store => store.GetFeedbacks(It.IsAny<Course>()))
                 .Returns(It.IsAny<IQueryable<Feedback>>());
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.As<ICourseStore>().Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             IQueryable<Feedback> _ = manager.GetFeedbacks(new Course());
 
@@ -571,10 +621,12 @@ namespace KnowledgeShare.Manager.Test
         public void Throw_When_Get_Feedback_Registrants_With_Null()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
 
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             Assert.Throws<ArgumentNullException>(() =>
                 manager.GetFeedbacks(null));
@@ -592,9 +644,12 @@ namespace KnowledgeShare.Manager.Test
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.As<ICourseStore>().Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await manager.AddFeedbackToAsync(
                 new Course(),
@@ -615,9 +670,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Trying_To_Add_Feedback_With_Null()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.AddFeedbackToAsync(
@@ -638,9 +696,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Trying_To_Add_Feedback_But_Store_Not_Implement_Related_Interface()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<NotSupportedStoreException>(async () =>
                 await manager.AddFeedbackToAsync(
@@ -654,15 +715,17 @@ namespace KnowledgeShare.Manager.Test
         public async Task Can_Remove_A_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
-
             fakeStore.Setup(store => store.RemoveAsync(
                     It.IsAny<Course>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
+
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await manager.RemoveAsync(new Course());
 
@@ -675,10 +738,12 @@ namespace KnowledgeShare.Manager.Test
         public async Task Throw_When_Removing_Null_Course()
         {
             var fakeStore = new Mock<ICourseStore>();
+            var fakeEventHandler = new Mock<ICourseManagerEventHandler>();
 
             CourseManager manager = new CourseManager(
                 fakeStore.Object,
-                new ICourseValidator[] { });
+                new ICourseValidator[] { },
+                fakeEventHandler.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await manager.RemoveAsync(null));

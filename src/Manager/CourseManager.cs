@@ -8,18 +8,24 @@ using KnowledgeShare.Manager.Validation;
 using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Manager.Exceptions;
+using KnowledgeShare.Manager.Abstractions;
 
 namespace KnowledgeShare.Manager
 {
     public class CourseManager : IDisposable
     {
         private readonly ICourseStore _store;
+        private readonly ICourseManagerEventHandler _eventHandler;
         private bool _disposed;
 
-        public CourseManager(ICourseStore store, IEnumerable<ICourseValidator> validators)
+        public CourseManager(
+            ICourseStore store,
+            IEnumerable<ICourseValidator> validators,
+            ICourseManagerEventHandler eventHandler)
         {
             _store = store;
             Validators = validators.ToList();
+            _eventHandler = eventHandler;
         }
 
         public IQueryable<Course> Courses => GetQueryableStore().Items;
@@ -42,6 +48,7 @@ namespace KnowledgeShare.Manager
             }
 
             await _store.CreateAsync(course, token);
+            await _eventHandler.CreatedAsync(course);
         }
 
         public async ValueTask<Course> FindByIdAsync(string courseId, CancellationToken token = default)
@@ -78,6 +85,7 @@ namespace KnowledgeShare.Manager
             }
 
             await UpdateCourseAsync(course, token);
+            await _eventHandler.UpdatedAsync(course);
         }
 
         public async Task RegisterUserToAsync(Course course, CourseUser user)
@@ -96,6 +104,7 @@ namespace KnowledgeShare.Manager
             var store = GetCourseRegistrantStore();
             await store.RegisterUserToAsync(course, user);
             await UpdateCourseAsync(course);
+            await _eventHandler.UserRegisteredAsync(course, user);
         }
 
         public async Task RegisterUsersToAsync(Course course, IEnumerable<CourseUser> users)
@@ -112,12 +121,14 @@ namespace KnowledgeShare.Manager
             }
 
             var store = GetCourseRegistrantStore();
-            foreach (var user in users.Where(user => user is { }))
+            var registrants = users.Where(user => user is { }).ToArray();
+            foreach (var user in registrants)
             {
                 await store.RegisterUserToAsync(course, user);
             }
 
             await UpdateCourseAsync(course);
+            await _eventHandler.UserRegisteredAsync(course, registrants);
         }
 
         public IQueryable<Registrant> GetReigstrants(Course course)
@@ -156,6 +167,7 @@ namespace KnowledgeShare.Manager
 
             await store.AddFeedbackToAsync(course, user, rate, message, token);
             await UpdateCourseAsync(course);
+            await _eventHandler.FeedbackGivenAsync(course, user);
         }
 
         public IQueryable<Feedback> GetFeedbacks(Course course)
@@ -182,6 +194,7 @@ namespace KnowledgeShare.Manager
             }
 
             await _store.RemoveAsync(course);
+            await _eventHandler.RemovedAsync(course);
         }
 
         public void Dispose()
