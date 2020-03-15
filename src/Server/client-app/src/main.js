@@ -12,9 +12,13 @@ const apiServer = process.env.VUE_APP_API_SERVER;
 
 const router = createRouter();
 
+function redirect(path) {
+  return router.push(path);
+}
+
 const auth = new AuthService(authServer);
 Vue.prototype.$auth = auth;
-Vue.prototype.$client = new HttpClient(apiServer, auth);
+Vue.prototype.$client = new HttpClient(apiServer, auth, redirect);
 
 new Vue({
   router,

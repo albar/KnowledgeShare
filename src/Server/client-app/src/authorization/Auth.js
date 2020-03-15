@@ -37,7 +37,6 @@ export default {
 
   methods: {
     async login(returnUrl) {
-      console.log(returnUrl);
       const state = { returnUrl };
       const result = await this.$auth.signIn(state);
       switch (result.status) {

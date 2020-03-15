@@ -29,7 +29,10 @@ namespace KnowledgeShare.Server.Middlewares
             }
             catch (ValidationException exception)
             {
-                if (context.Response.HasStarted) throw;
+                if (context.Response.HasStarted)
+                {
+                    throw;
+                }
 
                 var errorsString = JsonSerializer.Serialize(exception.Errors);
 
@@ -45,7 +48,10 @@ namespace KnowledgeShare.Server.Middlewares
             }
             catch (AuthorizationException exception)
             {
-                if (context.Response.HasStarted) throw;
+                if (context.Response.HasStarted)
+                {
+                    throw;
+                }
 
                 var errorString = JsonSerializer.Serialize(exception.Failure);
 
@@ -54,8 +60,6 @@ namespace KnowledgeShare.Server.Middlewares
                 context.Response.Clear();
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 context.Response.ContentType = "application/json";
-
-                await context.Response.WriteAsync("Unauthorized");
 
                 return;
             }

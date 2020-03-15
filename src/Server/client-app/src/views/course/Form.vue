@@ -242,8 +242,6 @@ export default {
       } else if (response.status === 400) {
         // show validation error
         console.error(await response.json());
-      } else {
-        console.error(response);
       }
 
       this.state.action = ActionState.Iddle;

@@ -1,48 +1,58 @@
 import requests from './requests';
 
 export class HttpClient {
-  constructor(baseUrl, authService) {
+  constructor(baseUrl, authService, redirect) {
     this.base = baseUrl;
     this.auth = authService;
+    this.redirect = redirect;
   }
 
-  async request(info) {
-    const request = await this.buildRequest(info);
-    return await fetch(request.url, request.info);
+  async request(request) {
+    const { url, info } = await this.buildRequest(request);
+    const response = await fetch(url, info);
+
+    if (response.status === 401) {
+      return await this.handleUnauthorizedResponse(request, response);
+    }
+
+    return response;
+  }
+
+  async handleUnauthorizedResponse(request, response) {
+    if (response.headers.has('WWW-Authenticate')) {
+      await this.auth.signIn();
+      return await this.request(request);
+    }
+
+    this.redirect('/');
+    return response;
   }
 
   async buildRequest({ name, args, data }) {
     const { resolveUrl, method } = requests[name];
-    let requestUrl = resolveUrl(args);
+    let url = resolveUrl(args);
 
     const token = await this.auth.getAccessToken();
 
-    const headers = {
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${token}`
+    const info = {
+      method,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     };
 
     if (['get', 'option'].includes(method)) {
-      const url = new URL(requestUrl, this.base);
+      url = new URL(url, this.base);
       url.search = new URLSearchParams(data).toString();
-      return {
-        url,
-        info: {
-          method,
-          headers
-        }
-      };
+    } else {
+      info.headers['Content-Type'] = 'application/json';
+      info.body = JSON.stringify(data);
     }
 
-    headers['Content-Type'] = 'application/json';
-
     return {
-      url: requestUrl,
-      info: {
-        method,
-        body: JSON.stringify(data),
-        headers
-      }
+      url,
+      info,
     };
   }
 }
