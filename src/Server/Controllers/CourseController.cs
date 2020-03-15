@@ -48,7 +48,7 @@ namespace KnowledgeShare.Server.Controllers
             var courses = await _manager.GetCoursesVisibleTo(user)
                 .Include(course => course.Author)
                 .Include(course => course.Speaker)
-                .OrderByDescending(course => course.UpdatedAt)
+                .OrderByDescending(course => course.CreatedAt)
                 .ToListAsync();
 
             return new ObjectResult(courses);
