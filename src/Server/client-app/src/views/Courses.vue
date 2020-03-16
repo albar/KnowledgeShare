@@ -37,7 +37,7 @@ export default {
   methods: {
     show(course) {
       this.$router.push({
-        name: ApplicationPaths.CourseDetail,
+        name: ApplicationPaths.CourseView,
         params: {
           id: course.id
         }

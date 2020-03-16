@@ -113,6 +113,8 @@ namespace KnowledgeShare.Server.Controllers
             var course = await _manager.Courses
                 .Include(course => course.Author)
                 .Include(course => course.Speaker)
+                .Include(course => course.Registrants)
+                .Include(course => course.Feedbacks)
                 .FirstAsync(course => course.Id == id);
 
             var result = await _authorization.AuthorizeAsync(
@@ -200,7 +202,7 @@ namespace KnowledgeShare.Server.Controllers
                 {
                     course.Description = Description;
                 }
-                if (string.IsNullOrWhiteSpace(Speaker) &&
+                if (!string.IsNullOrWhiteSpace(Speaker) &&
                     course.Speaker.Id != Speaker &&
                     manager != null)
                 {

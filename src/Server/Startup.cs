@@ -25,6 +25,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using KnowledgeShare.Server.Hubs.Course;
+using Newtonsoft.Json;
+using KnowledgeShare.Server.Converters;
 
 namespace KnowledgeShare.Server
 {
@@ -49,7 +51,12 @@ namespace KnowledgeShare.Server
                     .Build();
 
                 config.Filters.Add(new AuthorizeFilter(policy));
+            }).AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new CourseUserConverter());
             });
+
             services.AddRazorPages();
 
             services.AddDbContext<CourseContext>(options =>
@@ -82,7 +89,11 @@ namespace KnowledgeShare.Server
                 service.GetRequiredService<CourseUserManager>());
             services.AddScoped<CourseManager>();
 
-            services.AddDefaultIdentity<CourseUser>()
+            services.AddDefaultIdentity<CourseUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
+            })
                 .AddEntityFrameworkStores<CourseContext>();
 
             services.AddIdentityServer()
@@ -92,7 +103,7 @@ namespace KnowledgeShare.Server
                 .AddIdentityServerJwt();
 
             services.AddSingleton<IUserIdProvider, CourseUserIdProvider>();
-            services.AddSignalR();
+            services.AddSignalR().AddJsonProtocol();
 
             services.AddScoped<IAuthorizationHandler, CourseAuthorizationHandler>();
 

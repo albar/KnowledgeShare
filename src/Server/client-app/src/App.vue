@@ -1,5 +1,12 @@
 <template>
   <div id="app" class="container">
+    <loading-progress
+      :progress="progress"
+      shape="line"
+      size="200"
+      width="100%"
+      height="6"
+    />
     <nav>
       <div v-if="authenticated && user !== null" class="navbar navbar-expand-lg navbar-light px-2">
         <router-link to="/" class="navbar-brand mr-auto">Courses</router-link>
@@ -50,7 +57,8 @@ export default {
       ...ApplicationPaths
     },
     notification: false,
-    notifications: []
+    notifications: [],
+    progress: 0
   }),
   computed: {
     authorized() {
@@ -73,6 +81,7 @@ export default {
     }
   },
   async created() {
+    this.setUpProgressbar();
     this.$hubs.connect();
 
     this.$auth.subscribe(async authenticated => {
@@ -83,7 +92,6 @@ export default {
         return;
       }
       this.user = await this.$auth.getUser();
-
       this.gatherData();
     });
 
@@ -113,6 +121,17 @@ export default {
     }
   },
   methods: {
+    setUpProgressbar() {
+      this.$router.beforeResolve((_, __, next) => {
+        this.progress = 0.5;
+        next();
+      });
+
+      this.$router.afterEach((_, __) => {
+        this.progress = 1;
+        setTimeout(() => (this.progress = 0), 500);
+      });
+    },
     authenticate() {
       this.$router.push({
         name: "auth",

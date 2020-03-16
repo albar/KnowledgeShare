@@ -5,6 +5,8 @@ import store from './store';
 import AuthService from './authorization/service';
 import { HttpClient } from './client';
 import { createHubs } from './hubs';
+import 'vue-progress-path/dist/vue-progress-path.css'
+import VueProgress from 'vue-progress-path'
 
 Vue.config.productionTip = false;
 
@@ -21,6 +23,10 @@ const auth = new AuthService(authServer);
 Vue.prototype.$auth = auth;
 Vue.prototype.$client = new HttpClient(apiServer, auth, redirect);
 Vue.prototype.$hubs = createHubs(apiServer, auth);
+
+Vue.use(VueProgress, {
+  defaultShape: 'line',
+})
 
 new Vue({
   router,

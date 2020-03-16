@@ -208,7 +208,7 @@ export default {
     cancel() {
       if (this.edit) {
         this.$router.push({
-          name: ApplicationPaths.CourseDetail,
+          name: ApplicationPaths.CourseView,
           params: {
             id: this.$route.params.id
           }
@@ -234,7 +234,7 @@ export default {
       if (response.ok) {
         const result = await response.json();
         this.$router.push({
-          name: ApplicationPaths.CourseDetail,
+          name: ApplicationPaths.CourseView,
           params: {
             id: result.id
           }
