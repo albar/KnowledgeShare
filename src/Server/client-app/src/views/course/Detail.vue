@@ -6,9 +6,10 @@
     <div>speaker: {{ course.speaker.email }}</div>
     <div>
       <ul>
-        <li v-for="(session, i) in course.sessions" :key="i">
-          {{ new Date(session.start).toLocaleString() }} - {{ new Date(session.end).toLocaleString() }}
-        </li>
+        <li
+          v-for="(session, i) in course.sessions"
+          :key="i"
+        >{{ new Date(session.start).toLocaleString() }} - {{ new Date(session.end).toLocaleString() }}</li>
       </ul>
     </div>
     <button @click="edit">edit</button>
@@ -18,7 +19,7 @@
 
 <script>
 import { GetCourseDetail, RegisterCourse } from "@/client/requests";
-import { ApplicationPaths } from '../../authorization/constants';
+import { ApplicationPaths } from "../../authorization/constants";
 
 export default {
   data: () => ({
@@ -33,8 +34,9 @@ export default {
     });
     if (response.ok) {
       this.course = await response.json();
+      this.$hubs.course.on("CourseUpdated", this.courseUpdated);
     } else {
-      this.$router.push('/');
+      this.$router.push("/");
     }
   },
   methods: {
@@ -42,17 +44,24 @@ export default {
       this.$router.push({
         name: ApplicationPaths.CourseEdit,
         params: {
-          id: this.$route.params.id,
+          id: this.$route.params.id
         }
-      })
+      });
     },
     async register() {
       await this.$client.request({
         name: RegisterCourse,
         args: {
-          id: this.$route.params.id,
+          id: this.$route.params.id
         }
       });
+    },
+    courseUpdated(course) {
+      if (course.id !== this.course.id) {
+        return;
+      }
+
+      this.course = course;
     }
   }
 };

@@ -73,9 +73,7 @@ export default {
     }
   },
   async created() {
-    this.$notification
-      .start()
-      .then(_ => console.log("connected to notification server"));
+    this.$hubs.connect();
 
     this.$auth.subscribe(async authenticated => {
       this.authenticated = authenticated;
@@ -97,9 +95,12 @@ export default {
 
     this.user = await this.$auth.getUser();
 
-    this.$notification.on("Notification", ({ message }) => {
+    this.$hubs.notification.on("Notification", ({ message }) => {
       this.notifications.push(message);
     });
+  },
+  beforeDestroyed() {
+    this.$hubs.diconnect();
   },
   watch: {
     $route(val, old) {

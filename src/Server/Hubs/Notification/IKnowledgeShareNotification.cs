@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace KnowledgeShare.Server.Notification
+namespace KnowledgeShare.Server.Hubs.Notification
 {
     public interface IKnowledgeShareNotification
     {

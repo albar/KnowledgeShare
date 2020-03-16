@@ -7,7 +7,7 @@ using KnowledgeShare.Manager.Validation.CourseValidators;
 using KnowledgeShare.Server.Authorization.CourseAuthorization;
 using KnowledgeShare.Server.EventHandlers;
 using KnowledgeShare.Server.Middlewares;
-using KnowledgeShare.Server.Notification;
+using KnowledgeShare.Server.Hubs.Notification;
 using KnowledgeShare.Server.Services.CourseFeedbackAggregation;
 using KnowledgeShare.Store.Abstractions;
 using KnowledgeShare.Store.Core;
@@ -24,6 +24,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using KnowledgeShare.Server.Hubs.Course;
 
 namespace KnowledgeShare.Server
 {
@@ -140,7 +141,9 @@ namespace KnowledgeShare.Server
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+
                 endpoints.MapHub<KnowledgeShareNotificationHub>("/hub/notification");
+                endpoints.MapHub<CourseHub>("/hub/course");
             });
 
             app.UseSpa(spa =>

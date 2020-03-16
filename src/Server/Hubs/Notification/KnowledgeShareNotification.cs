@@ -1,4 +1,4 @@
-namespace KnowledgeShare.Server.Notification
+namespace KnowledgeShare.Server.Hubs.Notification
 {
     public class KnowledgeShareNotification
     {

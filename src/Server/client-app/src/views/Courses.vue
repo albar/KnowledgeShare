@@ -4,10 +4,13 @@
       <input class="form-control form-control-sm" type="search" placeholder="Search" />
     </div>
     <template v-for="course in courses">
-      <CourseListItem :key="course.id"
-        :course="course" link
+      <CourseListItem
+        :key="course.id"
+        :course="course"
+        link
         @linkClick="show(course)"
-        class="list-item py-2" />
+        class="list-item py-2"
+      />
     </template>
   </div>
 </template>
@@ -20,13 +23,16 @@ import { ApplicationPaths } from '../authorization/constants';
 export default {
   components: { CourseListItem },
   data: () => ({
-    courses: []
+    courses: [],
+    hub: null,
   }),
   async created() {
     const response = await this.$client.request({ name: ListCourses });
     if (response.ok) {
       this.courses = await response.json();
     }
+    this.$hubs.course.on('CourseCreated', this.courseCreated);
+    this.$hubs.course.on('CourseUpdated', this.courseUpdated);
   },
   methods: {
     show(course) {
@@ -36,6 +42,13 @@ export default {
           id: course.id
         }
       });
+    },
+    courseCreated(course) {
+      this.courses.unshift(course)
+    },
+    courseUpdated(course) {
+      const index = this.courses.findIndex(c => c.id === course.id);
+      this.courses.splice(index, 1, course);
     }
   }
 };

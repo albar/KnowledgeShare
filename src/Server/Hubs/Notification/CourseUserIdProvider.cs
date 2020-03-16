@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
-namespace KnowledgeShare.Server.Notification
+namespace KnowledgeShare.Server.Hubs.Notification
 {
     public class CourseUserIdProvider : IUserIdProvider
     {

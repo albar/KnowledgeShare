@@ -1,7 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeShare.Manager.Abstractions;
-using KnowledgeShare.Server.Notification;
+using KnowledgeShare.Server.Hubs.Course;
+using KnowledgeShare.Server.Hubs.Notification;
 using KnowledgeShare.Server.Services.CourseFeedbackAggregation;
 using KnowledgeShare.Store.Core;
 using Microsoft.AspNetCore.Identity;
@@ -13,34 +14,36 @@ namespace KnowledgeShare.Server.EventHandlers
     public class CourseManagerEventHandler : ICourseManagerEventHandler
     {
         private readonly ICourseFeedbackAggregationQueue _feedbackAggregationQueue;
-        private readonly IHubClients<IKnowledgeShareNotification> _hubClients;
+        private readonly IHubClients<IKnowledgeShareNotification> _notificationClients;
+        private readonly IHubClients<ICourseHub> _courseClients;
         private readonly ILogger<CourseManagerEventHandler> _logger;
 
         public CourseManagerEventHandler(
             ICourseFeedbackAggregationQueue queue,
-            IHubContext<KnowledgeShareNotificationHub, IKnowledgeShareNotification> hubContext,
+            IHubContext<KnowledgeShareNotificationHub, IKnowledgeShareNotification> notificationHubContext,
+            IHubContext<CourseHub, ICourseHub> courseHubContext,
             ILogger<CourseManagerEventHandler> logger)
         {
             _feedbackAggregationQueue = queue;
+            _notificationClients = notificationHubContext.Clients;
+            _courseClients = courseHubContext.Clients;
             _logger = logger;
-            _hubClients = hubContext.Clients;
         }
 
-        public Task CreatedAsync(Course course)
+        public async Task CreatedAsync(Course course)
         {
-            // notify subscriber for new public course
-            return Task.CompletedTask;
+            await _courseClients.All.CourseCreated(course);
         }
 
-        public Task UpdatedAsync(Course course)
+        public async Task UpdatedAsync(Course course)
         {
-            // notify registrant for course update
-            return Task.CompletedTask;
+            await _courseClients.All.CourseUpdated(course);
         }
 
         public async Task UserRegisteredAsync(Course course, params CourseUser[] users)
         {
-            await _hubClients
+            _logger.LogInformation($"Registered User Count: {users.Length}");
+            await _notificationClients
                 .Users(users.Select(u => u.Id).ToList())
                 .Notification(KnowledgeShareNotification.FromRaw(
                     "You are registered to a {0} course \"{1}\".\n",

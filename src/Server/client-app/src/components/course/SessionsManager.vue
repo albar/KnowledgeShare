@@ -11,19 +11,19 @@
         @save="updateSession(i, $event)"
         @remove="removeSession(i)" />
     </template>
-    <div class="relative" v-if="!disabled">
+    <div class="pb-3" v-if="!disabled">
       <transition name="fade" mode="out-in">
         <button
           v-if="this.state === this.states.Iddle"
           @click="addSession"
-          class="absolute btn btn-sm btn-block btn-light mt-3 transition"
+          class="btn btn-sm btn-block btn-light mt-3 transition"
         >Add Session</button>
         <Session
           v-else-if="this.state === this.states.Create"
           write
           @cancel="cancelCreate"
           @save="saveCreate"
-          class="absolute transition"
+          class="transition"
         />
       </transition>
     </div>
